@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-str1 = u"パトカー"
-str2 = u"タクシー"
+text = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
 
-newStr = ""
+print(sorted(text.split(" ")))#辞書型で並べる sorted()
 
-for i in range(0,len(str1)):
-    newStr = newStr + str1[i] + str2[i]
 
-print(newStr)
-print(newStr.encode('utf-8'))
+ #大文字は先に読まれてしまう．．

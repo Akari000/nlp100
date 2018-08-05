@@ -1,11 +1,11 @@
-
 # -*- coding: utf-8 -*-
-str = u"パタトクカシーー"
+str1 = u"パトカー"
+str2 = u"タクシー"
+
 newStr = ""
 
-for i in range(0,len(u"パタトクカシーー"),2):
-    print(i)
-    newStr += str[i+1]
-    print(str[i].encode('utf-8'))
+for i in range(0,len(str1)):
+    newStr = newStr + str1[i] + str2[i]
 
+print(newStr)
 print(newStr.encode('utf-8'))
