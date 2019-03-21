@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~
+    docker:
+      - image: circleci/python:3.7.2
+
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            ls
+            pip3 install -r ./requirements.txt
+
+      - run:
+          name: Run linter
+          command: flake8 ./*.py
