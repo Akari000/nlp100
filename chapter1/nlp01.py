@@ -1,9 +1,7 @@
-
-# -*- coding: utf-8 -*-
 str = u"パタトクカシーー"
-newStr = ""
+result = ""
 
 for i in range(0, len(u"パタトクカシーー"), 2):
-    newStr += str[i+1]
+    result += str[i+1]
 
-print(newStr)
+print(result)

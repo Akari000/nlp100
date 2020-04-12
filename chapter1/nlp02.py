@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 str1 = u"パトカー"
 str2 = u"タクシー"
-newStr = ""
+result = ""
 
 for i in range(0, len(str1)):
-    newStr = newStr + str1[i] + str2[i]
+    result = result + str1[i] + str2[i]
 
-print(newStr)
+print(result)
