@@ -1,0 +1,1 @@
+split -l 15 data/popular-names1.txt data/a_code
