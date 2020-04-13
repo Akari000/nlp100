@@ -1,7 +1,4 @@
-str = u"パタトクカシーー"
-result = ""
+text = u"パタトクカシーー"
 
-for i in range(0, len(u"パタトクカシーー"), 2):
-    result += str[i+1]
-
-print(result)
+for i in range(0, len(text), 2):
+    print(text[i], end="")

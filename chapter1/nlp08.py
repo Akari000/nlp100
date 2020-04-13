@@ -8,5 +8,5 @@ def cipher(text):
     return result
 
 
-print('I am blue cat.')
-print(cipher('I am blue cat.'))
+print('I am a blue cat.')
+print(cipher('I am a blue cat.'))

@@ -1,5 +1,6 @@
+import sys
+sys.path.append('../utils')
 from utils import ch_ngram
-
 textX = "paraparaparadise"
 textY = "paragraph"
 

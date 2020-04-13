@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-str1 = u"パトカー"
-str2 = u"タクシー"
+text1 = u"パトカー"
+text2 = u"タクシー"
 result = ""
 
-for i in range(0, len(str1)):
-    result = result + str1[i] + str2[i]
-
-print(result)
+for t1, t2 in zip(text1, text2):
+    print(t1 + t2, end="")
