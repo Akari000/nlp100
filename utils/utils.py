@@ -1,15 +1,7 @@
-def word_ngram(wordList, n):
+def ngram(word_list, n, sep=""):
     ngram = []
-    for i in range(0, len(wordList)-1):
-        word = (" ").join(wordList[i:i+n])
-        ngram.append(word)
-    return ngram
-
-
-def ch_ngram(wordList, n):
-    ngram = []
-    for i in range(0, len(wordList)-1):
-        word = ("").join(wordList[i:i+n])
+    for i in range(0, len(word_list)-n+1):
+        word = (sep).join(word_list[i:i+n])
         ngram.append(word)
     return ngram
 

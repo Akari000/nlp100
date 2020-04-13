@@ -1,11 +1,12 @@
 import sys
 sys.path.append('../utils')
-from utils import ch_ngram
+from utils import ngram
 textX = "paraparaparadise"
 textY = "paragraph"
 
 
 def Union(X, Y):
+    # set(X) | set(Y) を使っても良い
     return set(X + Y)
 
 
@@ -17,8 +18,8 @@ def Intersection(X, Y):
     return set(X) & set(Y)
 
 
-X = ch_ngram(textX, 2)
-Y = ch_ngram(textY, 2)
+X = ngram(textX, 2)
+Y = ngram(textY, 2)
 print("X", X)
 print("Y", Y)
 

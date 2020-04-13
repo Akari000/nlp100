@@ -1,12 +1,20 @@
 def cipher(text):
-    result = ''
+    encrypted = ''
     for t in text:
         if t.islower():
-            result += chr(219 - ord(t))
+            encrypted += chr(219 - ord(t))
         else:
-            result += t
-    return result
+            encrypted += t
+    return encrypted
 
 
-print('I am a blue cat.')
-print(cipher('I am a blue cat.'))
+origin = 'I am a blue cat.'
+encrypted = cipher(origin)
+decrypted = cipher(encrypted)
+
+print("original: ", origin)
+print("encrypted: ", encrypted)
+print("decrypted: ", decrypted)
+# original:  I am a blue cat.
+# encrypted:  I zn z yofv xzg.
+# decrypted:  I am a blue cat.
