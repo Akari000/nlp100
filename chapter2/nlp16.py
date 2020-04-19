@@ -3,6 +3,10 @@ n = int(sys.argv[1])
 lines = []
 with open("../data/popular-names.txt") as f:
     lines = f.readlines()
+
+# TODO ファイルを分割する方での実装
+
+
 size = len(lines) / n
 size = int(size)
 
