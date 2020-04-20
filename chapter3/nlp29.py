@@ -19,3 +19,8 @@ pages = data["query"]['pages']
 
 for v in pages.values():
     print(v['imageinfo'][0]['url'])
+
+
+"""
+https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg
+"""
