@@ -11,6 +11,10 @@ import pickle
 text = ''
 morpheme_list = []
 
+
+# TODO return する関数を作る
+
+
 with open('../data/neko.txt.mecab', 'r') as f:
     text = f.readlines()
 

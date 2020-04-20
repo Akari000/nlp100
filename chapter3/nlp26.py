@@ -11,7 +11,7 @@ with open('../data/jawiki-England.json', "r") as f:
 text = text.replace("'", '')                # 強調マークアップの除去
 text = text.split("==")[0]                  # セクションを除去
 text = text.split("\n|")[1:]                # 基礎情報より前の行を除去
-text[-1] = text[-1].split("\n}}\nグレート")[0]     # 後ろのいらない行を削除
+text[-1] = text[-1].split("\n}}\n")[0]     # 後ろのいらない行を削除
 
 for line in text:
     line = line.split(" = ")

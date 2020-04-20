@@ -6,6 +6,9 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
+# TODO 文中でcategoryがでてきたら引っかかってしまうので正規表現を使う \[\[Category:.*\]\]
+# ^ 行頭
+# $　行末
 text = text.split("\n")
 categories = [line for line in text if ('Category' in line)]
 

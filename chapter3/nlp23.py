@@ -8,6 +8,8 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
+# TODO 正規表現を使う
+# re.compileでpatternを指定できる．
 text = text.split("\n")
 sections = [line for line in text if ('==' in line)]
 

@@ -4,6 +4,12 @@
 import json
 import re
 text = ""
+
+
+## TODO メディアファイルは [File: ]という形のもの
+## 英字だけ抜き出す
+
+
 pattern = r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
 with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
