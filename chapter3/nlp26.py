@@ -8,6 +8,7 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
+# TODO ２つ以上のカンマを抜くようにする　\'{2,5}'
 text = text.replace("'", '')                # 強調マークアップの除去
 text = text.split("==")[0]                  # セクションを除去
 text = text.split("\n|")[1:]                # 基礎情報より前の行を除去

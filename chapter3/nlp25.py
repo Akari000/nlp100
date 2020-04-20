@@ -3,18 +3,18 @@
 
 import json
 from pprint import pprint
+import re
 
 info = {}
 with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-text = text.split("==")[0]                  # セクションを除去
-text = text.split("\n|")[1:]                # 基礎情報より前の行を除去
-text[-1] = text[-1].split("}}\n'''")[0]     # 後ろのいらない行を削除
+
+text = re.findall(r'{{基礎情報(.+?)}}', text)[0]
+text = re.findall(r'[|](.*) = (.*)\n', text)
 
 for line in text:
-    line = line.split(" = ")
     info[line[0]] = line[1]
 
 pprint(info)

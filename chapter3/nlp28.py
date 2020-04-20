@@ -9,6 +9,9 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
+# TODO htmlタグの除去，|の除去, rang[.uk]などの除去
+
+
 text = text.replace("'", '')                # 強調マークアップの除去
 text = text.replace('[', '')                # 内部リンクマークアップの除去
 text = text.replace(']', '')

@@ -8,6 +8,10 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
+
+# TODO [[記事名|]] -> 記事名
+# [[記事名|表示文字]] -> 表示文字　となるようにする．
+
 text = text.replace("'", '')                # 強調マークアップの除去
 text = text.replace('[', '')                # 内部リンクマークアップの除去
 text = text.replace(']', '')
