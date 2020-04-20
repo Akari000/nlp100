@@ -1,19 +1,19 @@
 # 36. 単語の出現頻度
 # 文章中に出現する単語とその出現頻度を求め，出現頻度の高い順に並べよ．
 
-import pickle
 import collections
+from nlp30 import get_morphs
+morphs = []
 
-morpheme_list = []
+with open('../data/neko.txt.mecab', 'r') as f:
+    lines = f.readlines()
+    morphs = get_morphs(lines)
 
-with open('../data/neko.txt.mecab.list', 'rb') as f:
-    morpheme_list = pickle.load(f)
+surfaces = [morph['surface'] for morph in morphs]
+count = collections.Counter(surfaces)
 
-words = [node['surface'] for node in morpheme_list]
-c = collections.Counter(words)
-
-for word in c.most_common():
-    print(word[0])
+for surface in count.most_common():
+    print(surface[0])
 
 
 '''

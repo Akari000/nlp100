@@ -1,16 +1,16 @@
 # 31. 動詞
 # 動詞の表層形をすべて抽出せよ．
 
-import pickle
+from nlp30 import get_morphs
+morphs = []
 
-morpheme_list = []
+with open('../data/neko.txt.mecab', 'r') as f:
+    lines = f.readlines()
+    morphs = get_morphs(lines)
 
-with open('../data/neko.txt.mecab.list', 'rb') as f:
-    morpheme_list = pickle.load(f)
-
-for line in morpheme_list:
-    if line['pos'] == '動詞':
-        print(line['surface'])
+for morph in morphs:
+    if morph['pos'] == '動詞':
+        print(morph['surface'])
 
 
 '''

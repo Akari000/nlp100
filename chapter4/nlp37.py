@@ -1,17 +1,18 @@
 # 37. 頻度上位10語
 # 出現頻度が高い10語とその出現頻度をグラフ（例えば棒グラフなど）で表示せよ．
 
-import pickle
 import collections
 import matplotlib.pyplot as plt
 import japanize_matplotlib
+from nlp30 import get_morphs
+morphs = []
 
-morpheme_list = []
-with open('../data/neko.txt.mecab.list', 'rb') as f:
-    morpheme_list = pickle.load(f)
+with open('../data/neko.txt.mecab', 'r') as f:
+    lines = f.readlines()
+    morphs = get_morphs(lines)
 
-words = [node['surface'] for node in morpheme_list]
-c = collections.Counter(words)
+surfaces = [morph['surface'] for morph in morphs]
+c = collections.Counter(surfaces)
 
 surface = []
 count = []

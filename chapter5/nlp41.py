@@ -38,4 +38,3 @@ def get_morphs(text):
 with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
 morphs = get_morphs(text)
-

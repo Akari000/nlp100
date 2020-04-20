@@ -1,22 +1,22 @@
 # 34. 「AのB」
 # 2つの名詞が「の」で連結されている名詞句を抽出せよ．
 
-import pickle
+from nlp30 import get_morphs
+morphs = []
 
-morpheme_list = []
+with open('../data/neko.txt.mecab', 'r') as f:
+    lines = f.readlines()
+    morphs = get_morphs(lines)
 
-with open('../data/neko.txt.mecab.list', 'rb') as f:
-    morpheme_list = pickle.load(f)
-
-for i, line in enumerate(morpheme_list[1:-1], 1):
-    if line['surface'] == 'の' \
-       and morpheme_list[i-1]['pos'] == '名詞' \
-       and morpheme_list[i+1]['pos'] == '名詞':
+for i, morph in enumerate(morphs[1:-1], 1):
+    if morph['surface'] == 'の' \
+       and morphs[i-1]['pos'] == '名詞' \
+       and morphs[i+1]['pos'] == '名詞':
 
         print("%s%s%s" % (
-              morpheme_list[i-1]['surface'],
-              line['surface'],
-              morpheme_list[i+1]['surface']))
+              morphs[i-1]['surface'],
+              morph['surface'],
+              morphs[i+1]['surface']))
 
 '''
 彼の掌

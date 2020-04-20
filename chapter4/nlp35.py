@@ -1,21 +1,21 @@
 # 35. 名詞の連接
 # 名詞の連接（連続して出現する名詞）を最長一致で抽出せよ
 
-import pickle
+from nlp30 import get_morphs
+morphs = []
 
-morpheme_list = []
+with open('../data/neko.txt.mecab', 'r') as f:
+    lines = f.readlines()
+    morphs = get_morphs(lines)
 
-with open('../data/neko.txt.mecab.list', 'rb') as f:
-    morpheme_list = pickle.load(f)
-
-size = len(morpheme_list)
-for i, line in enumerate(morpheme_list[:-1]):
-    if line['pos'] == '名詞' and morpheme_list[i+1]['pos'] == '名詞':
-        print(line['surface'] + morpheme_list[i+1]['surface'], end='')
+size = len(morphs)
+for i, morph in enumerate(morphs[:-1]):
+    if morph['pos'] == '名詞' and morphs[i+1]['pos'] == '名詞':
+        print(morph['surface'] + morphs[i+1]['surface'], end='')
         j = i+2
         while(j < size):
-            if morpheme_list[j]['pos'] == '名詞':
-                print(morpheme_list[j]['surface'], end='')
+            if morphs[j]['pos'] == '名詞':
+                print(morphs[j]['surface'], end='')
                 j += 1
             else:
                 print()
