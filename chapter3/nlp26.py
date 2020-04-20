@@ -3,20 +3,19 @@
 
 import json
 from pprint import pprint
+import re
+
 info = {}
 with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-# TODO ２つ以上のカンマを抜くようにする　\'{2,5}'
-text = text.replace("'", '')                # 強調マークアップの除去
-text = text.split("==")[0]                  # セクションを除去
-text = text.split("\n|")[1:]                # 基礎情報より前の行を除去
-text[-1] = text[-1].split("\n}}\n")[0]     # 後ろのいらない行を削除
+text = re.findall(r'{{(基礎情報[\s\S]*\n)}}', text)[0]
+text = re.sub(r"'{2,5}", '', text)  # 強調マークアップを除去
+fields = re.findall(r'\|(.*?) = ([\s\S]*?)(?=\n\|)', text)
 
-for line in text:
-    line = line.split(" = ")
-    info[line[0]] = line[1]
+for field in fields:
+    info[field[0]] = field[1]
 
 pprint(info)
 
@@ -73,7 +72,6 @@ pprint(info)
  '最大都市': 'ロンドン',
  '標語': '{{lang|fr|Dieu et mon droit}}<br/>（[[フランス語]]:神と私の権利）',
  '水面積率': '1.3%',
- '注記': '<references />',
  '略名': 'イギリス',
  '確立年月日1': '[[927年]]／[[843年]]',
  '確立年月日2': '[[1707年]]',

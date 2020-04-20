@@ -9,95 +9,82 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-# TODO htmlタグの除去，|の除去, rang[.uk]などの除去
 
+text = re.findall(r'{{(基礎情報[\s\S]*\n)}}', text)[0]
+text = re.sub(r"'{2,5}", '', text)  # 強調マークアップを除去
+fields = re.findall(r'\|(.*?) = ([\s\S]*?)(?=\n\|)', text)
 
-text = text.replace("'", '')                # 強調マークアップの除去
-text = text.replace('[', '')                # 内部リンクマークアップの除去
-text = text.replace(']', '')
-text = re.sub(r'<!-- \S+ -->', '', text)    # コメントアウトの除去
-text = re.sub(r'[{}:;#*]', '', text)    # その他のマークアップの除去
-
-text = text.split('==')[0]                  # セクションを除去
-text = text.split('\n|')[1:]                # 基礎情報より前の行を除去
-text[-1] = text[-1].split("\n\n")[0]     # 後ろのいらない行を削除
-
-for line in text:
-    line = line.split(' = ')
-    info[line[0]] = line[1]
+for field in fields:
+    value = re.sub(
+        r"\[\[(?:.*?\||)(.*?)\]\]", r'\1', field[1])  # 内部リンクマークアップを除去
+    value = re.sub(r'<.*?>', '', value)  # htmlタグ，コメントアウトの除去
+    value = re.sub(r'\[.*?\]', '', value)  # 外部リンクの除去
+    value = re.sub(r'{{lang\|.*?\|(.*?)}}', r'\1', value)  # langの除去 {{lang|.*|value}} -> value
+    value = re.sub(r'\*', '', value)    # 箇条書きの除去
+    value = re.sub(r'.*?\|(.*?)', r'\1', value)    # フォントサイズの除去
+    info[field[0]] = value
 
 pprint(info)
 
 
 """
-{'GDP/人': '36,727<ref name="imf-statistics-gdp" />',
- 'GDP値': '2兆3162億<ref name="imf-statistics-gdp" />',
- 'GDP値MER': '2兆4337億<ref name="imf-statistics-gdp" />',
- 'GDP値元': '1兆5478億<ref '
-          'name="imf-statistics-gdp">http//www.imf.org/external/pubs/ft/weo/2012/02/weodata/weorept.aspx?pr.x=70&pr.y=13&sy=2010&ey=2012&scsm=1&ssd=1&sort=country&ds=.&br=1&c=112&s=NGDP%2CNGDPD%2CPPPGDP%2CPPPPC&grp=0&a= '
-          'IMF>Data and Statistics>World Economic Outlook Databases>By '
-          'Countrise>United Kingdom</ref>',
+{'GDP/人': '36,727',
+ 'GDP値': '2兆3162億',
+ 'GDP値MER': '2兆4337億',
+ 'GDP値元': '1兆5478億',
  'GDP統計年': '2012',
  'GDP統計年MER': '2012',
  'GDP統計年元': '2012',
  'GDP順位': '6',
  'GDP順位MER': '5',
  'ISO 3166-1': 'GB / GBR',
- 'ccTLD': '.uk / .gb<ref>使用は.ukに比べ圧倒的少数。</ref>',
- '人口値': '63,181,775<ref>http//esa.un.org/unpd/wpp/Excel-Data/population.htm '
-        'United Nations Department of Economic and Social Affairs>Population '
-        'Division>Data>Population>Total Population</ref>',
+ 'ccTLD': '.uk / .gb使用は.ukに比べ圧倒的少数。',
+ '人口値': '63,181,775',
  '人口大きさ': '1 E7',
  '人口密度値': '246',
  '人口統計年': '2011',
  '人口順位': '22',
  '位置画像': 'Location_UK_EU_Europe_001.svg',
  '元首等氏名': 'エリザベス2世',
- '元首等肩書': 'イギリスの君主|女王',
- '公式国名': 'lang|en|United Kingdom of Great Britain and Northern '
-         'Ireland<ref>英語以外での正式国名<br/>\n'
-         'lang|gd|An Rìoghachd Aonaichte na Breatainn Mhòr agus Eirinn mu '
-         'Thuath（スコットランド・ゲール語）<br/>\n'
-         'lang|cy|Teyrnas Gyfunol Prydain Fawr a Gogledd '
-         'Iwerddon（ウェールズ語）<br/>\n'
-         'lang|ga|Ríocht Aontaithe na Breataine Móire agus Tuaisceart na '
-         'hÉireann（アイルランド語）<br/>\n'
-         'lang|kw|An Rywvaneth Unys a Vreten Veur hag Iwerdhon '
-         'Glédh（コーンウォール語）<br/>\n'
-         'lang|sco|Unitit Kinrick o Great Breetain an Northren '
-         'Ireland（スコットランド語）<br/>\n'
-         'lang|sco|Claught Kängrick o Docht Brätain an Norlin '
-         'Airlann、lang|sco|Unitet Kängdom o Great Brittain an Norlin '
-         'Airlann（アルスター・スコットランド語）</ref>',
+ '元首等肩書': '女王',
+ '公式国名': 'United Kingdom of Great Britain and Northern Ireland英語以外での正式国名:\n'
+         'An Rìoghachd Aonaichte na Breatainn Mhòr agus Eirinn mu '
+         'Thuath（スコットランド・ゲール語）\n'
+         'Teyrnas Gyfunol Prydain Fawr a Gogledd Iwerddon（ウェールズ語）\n'
+         'Ríocht Aontaithe na Breataine Móire agus Tuaisceart na '
+         'hÉireann（アイルランド語）\n'
+         'An Rywvaneth Unys a Vreten Veur hag Iwerdhon Glédh（コーンウォール語）\n'
+         'Unitit Kinrick o Great Breetain an Northren Ireland（スコットランド語）\n'
+         'Claught Kängrick o Docht Brätain an Norlin Airlann、Unitet Kängdom o '
+         'Great Brittain an Norlin Airlann（アルスター・スコットランド語）',
  '公用語': '英語（事実上）',
  '国旗画像': 'Flag of the United Kingdom.svg',
- '国歌': '女王陛下万歳|神よ女王陛下を守り給え',
- '国章リンク': '（イギリスの国章|国章）',
- '国章画像': 'ファイルRoyal Coat of Arms of the United Kingdom.svg|85px|イギリスの国章',
+ '国歌': '神よ女王陛下を守り給え',
+ '国章リンク': '（国章）',
+ '国章画像': 'イギリスの国章',
  '国際電話番号': '44',
  '夏時間': '+1',
  '建国形態': '建国',
  '日本語国名': 'グレートブリテン及び北アイルランド連合王国',
  '時間帯': '±0',
  '最大都市': 'ロンドン',
- '標語': 'lang|fr|Dieu et mon droit<br/>（フランス語神と私の権利）',
+ '標語': 'Dieu et mon droit（フランス語:神と私の権利）',
  '水面積率': '1.3%',
- '注記': '<references />',
  '略名': 'イギリス',
  '確立年月日1': '927年／843年',
  '確立年月日2': '1707年',
  '確立年月日3': '1801年',
  '確立年月日4': '1927年',
- '確立形態1': 'イングランド王国／スコットランド王国<br />（両国とも連合法 (1707年)|1707年連合法まで）',
- '確立形態2': 'グレートブリテン王国建国<br />（連合法 (1707年)|1707年連合法）',
- '確立形態3': 'グレートブリテン及びアイルランド連合王国建国<br />（連合法 (1800年)|1800年連合法）',
+ '確立形態1': '1707年連合法まで）',
+ '確立形態2': '1707年連合法）',
+ '確立形態3': '1800年連合法）',
  '確立形態4': '現在の国号「グレートブリテン及び北アイルランド連合王国」に変更',
- '通貨': 'スターリング・ポンド|UKポンド (&pound)',
+ '通貨': 'UKポンド (&pound;)',
  '通貨コード': 'GBP',
  '面積値': '244,820',
  '面積大きさ': '1 E11',
  '面積順位': '76',
  '首相等氏名': 'デーヴィッド・キャメロン',
- '首相等肩書': 'イギリスの首相|首相',
+ '首相等肩書': '首相',
  '首都': 'ロンドン'}
-"""
+ """

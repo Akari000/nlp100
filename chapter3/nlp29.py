@@ -4,26 +4,26 @@
 import requests
 import json
 import re
-info = {}
-
 with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-text = text.replace("'", '')                # 強調マークアップの除去
-text = text.replace('[', '')                # 内部リンクマークアップの除去
-text = text.replace(']', '')
-text = re.sub(r'<!-- \S+ -->', '', text)    # コメントアウトの除去
-text = re.sub(r'[{}:;#*]', '', text)    # その他のマークアップの除去
+info = {}
+text = re.findall(r'{{(基礎情報[\s\S]*\n)}}', text)[0]
+text = re.sub(r"'{2,5}", '', text)  # 強調マークアップを除去
+fields = re.findall(r'\|(.*?) = ([\s\S]*?)(?=\n\|)', text)
 
-text = text.split('==')[0]                  # セクションを除去
-text = text.split('\n|')[1:]                # 基礎情報より前の行を除去
-text[-1] = text[-1].split("\n\n")[0]     # 後ろのいらない行を削除
+for field in fields:
+    value = re.sub(
+        r"\[\[(?:.*?\||)(.*?)\]\]", r'\1', field[1])  # 内部リンクマークアップを除去
+    value = re.sub(r'<.*?>', '', value)  # htmlタグ，コメントアウトの除去
+    value = re.sub(r'\[.*?\]', '', value)  # 外部リンクの除去
+    value = re.sub(r'{{lang\|.*?\|(.*?)}}', r'\1', value)  # langの除去 {{lang|.*|value}} -> value
+    value = re.sub(r'\*', '', value)    # 箇条書きの除去
+    value = re.sub(r'.*?\|(.*?)', r'\1', value)    # フォントサイズの除去
+    info[field[0]] = value
 
-for line in text:
-    line = line.split(' = ')
-    info[line[0]] = line[1]
-
+# ここから
 titles = 'file:' + info['国旗画像']
 
 s = requests.Session()

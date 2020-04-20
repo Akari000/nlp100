@@ -8,9 +8,6 @@ with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-# TODO 正規表現を使う
-# re.compileでpatternを指定できる．
-
 sections = re.findall(r'(={2,5})(?: |)(.*?)={2,5}', text)
 
 for section in sections:

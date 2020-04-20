@@ -11,11 +11,11 @@ with open('../data/jawiki-England.json', "r") as f:
     text = data["text"]
 
 
-text = re.findall(r'{{基礎情報(.+?)}}', text)[0]
-text = re.findall(r'[|](.*) = (.*)\n', text)
+text = re.findall(r'{{(基礎情報[\s\S]*\n)}}', text)[0]
+fields = re.findall(r'\|(.*?) = ([\s\S]*?)(?=\n\|)', text)
 
-for line in text:
-    info[line[0]] = line[1]
+for field in fields:
+    info[field[0]] = field[1]
 
 pprint(info)
 
@@ -72,7 +72,6 @@ pprint(info)
  '最大都市': 'ロンドン',
  '標語': '{{lang|fr|Dieu et mon droit}}<br/>（[[フランス語]]:神と私の権利）',
  '水面積率': '1.3%',
- '注記': '<references />\n',
  '略名': 'イギリス',
  '確立年月日1': '[[927年]]／[[843年]]',
  '確立年月日2': '[[1707年]]',
@@ -90,4 +89,9 @@ pprint(info)
  '首相等氏名': '[[デーヴィッド・キャメロン]]',
  '首相等肩書': '[[イギリスの首相|首相]]',
  '首都': '[[ロンドン]]'}
+ """
+
+"""note
+[\s\S]* 全ての文字
+(?= ), (?<= )  検索範囲には含めるが，マッチ対象には含めない．検索箇所に重複がある場合に使える．
 """
