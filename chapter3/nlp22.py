@@ -2,16 +2,28 @@
 # 記事のカテゴリ名を（行単位ではなく名前で）抽出せよ
 import json
 import re
-first = 3 + len('Category')
-last = 2
 text = ""
 with open('../data/jawiki-England.json', "r") as f:
     data = json.loads(f.read())
     text = data["text"]
 
-text = text.split("\n")
-categories = [line for line in text if ('Category' in line)]
+categories = re.findall(r'\[\[Category:(.*?)(?:\|.*|)\]\]', text)
 
 for category in categories:
-    print(re.findall(r'^\[\[Category:(.*?)\]\]$', category))
-    print(category[first:-last])
+    print(category)
+
+'''
+イギリス
+英連邦王国
+G8加盟国
+欧州連合加盟国
+海洋国家
+君主国
+島国
+1801年に設立された州・地域
+'''
+
+'''note
+() キャプチャ...中身を抽出
+(?:) キャプチャしない丸括弧
+'''

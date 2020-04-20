@@ -10,12 +10,12 @@ with open('../data/jawiki-England.json', "r") as f:
 
 # TODO 正規表現を使う
 # re.compileでpatternを指定できる．
-text = text.split("\n")
-sections = [line for line in text if ('==' in line)]
+
+sections = re.findall(r'(={2,5})(?: |)(.*?)={2,5}', text)
 
 for section in sections:
-    name = re.sub(r'[= ]', '', section)
-    level = int(section.count('=') / 2 - 1)
+    level = len(section[0]) - 1
+    name = section[1]
     print(name, level)
 
 # 国名 1
@@ -62,3 +62,7 @@ for section in sections:
 # 脚注 1
 # 関連項目 1
 # 外部リンク 1
+
+'''note
+{n,m} 直前の正規表現を m 回から n 回、できるだけ多く繰り返したものにマッチ
+'''
