@@ -6,7 +6,7 @@ import collections
 
 morpheme_list = []
 
-with open('../data/neko.txt.mecab', 'rb') as f:
+with open('../data/neko.txt.mecab.list', 'rb') as f:
     morpheme_list = pickle.load(f)
 
 words = [node['surface'] for node in morpheme_list]

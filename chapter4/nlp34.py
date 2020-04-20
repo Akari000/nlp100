@@ -5,7 +5,7 @@ import pickle
 
 morpheme_list = []
 
-with open('../data/neko.txt.mecab', 'rb') as f:
+with open('../data/neko.txt.mecab.list', 'rb') as f:
     morpheme_list = pickle.load(f)
 
 for i, line in enumerate(morpheme_list[1:-1], 1):
