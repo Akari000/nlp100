@@ -27,14 +27,14 @@ def get_chunks(text):
     for sentence in re.findall(r'(\*[\s\S]*?EOS)', text):
         chunks = []
         for clause in re.findall(
-                r'\* (\d*) (-?\d+\w+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  #(srcs) (dst) (morphs)
+                r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  #(srcs) (dst) (morphs)
             morphs = []
             for line in re.findall(r'(.*?)\t(.*?)(?:$|\n)', clause[2]):  # tab前から行末または\nまで
                 surface = line[0]
                 feature = line[1].split(',')
-                morph = Morph(surface, feature[0], feature[1], feature[6])
+                morph = Morph(surface, feature[6], feature[0], feature[1])
                 morphs.append(morph)
-            chunk = Chunk(morphs, clause[1], clause[0])
+            chunk = Chunk(morphs, int(clause[1]), int(clause[0]))
             chunks.append(chunk)
         data.append(chunks)
     return data
@@ -51,30 +51,30 @@ if __name__ == "__main__":
 
 
 '''
-dst 1D srcs 0
-この 連体詞 * この
-dst 7D srcs 1
-書生 名詞 一般 書生
-という 助詞 格助詞 という
-の 名詞 非自立 の
-は 助詞 係助詞 は
-dst 4D srcs 2
-時々 副詞 一般 時々
-dst 4D srcs 3
-我々 名詞 代名詞 我々
-を 助詞 格助詞 を
-dst 5D srcs 4
-捕え 動詞 自立 捕える
-て 助詞 接続助詞 て
-dst 6D srcs 5
-煮 動詞 自立 煮る
-て 助詞 接続助詞 て
-dst 7D srcs 6
-食う 動詞 自立 食う
-という 助詞 格助詞 という
-dst -1D srcs 7
-話 名詞 サ変接続 話
-で 助動詞 * だ
-ある 助動詞 * ある
-。 記号 句点 。
+dst 1 srcs 0
+この この 連体詞 *
+dst 7 srcs 1
+書生 書生 名詞 一般
+という という 助詞 格助詞
+の の 名詞 非自立
+は は 助詞 係助詞
+dst 4 srcs 2
+時々 時々 副詞 一般
+dst 4 srcs 3
+我々 我々 名詞 代名詞
+を を 助詞 格助詞
+dst 5 srcs 4
+捕え 捕える 動詞 自立
+て て 助詞 接続助詞
+dst 6 srcs 5
+煮 煮る 動詞 自立
+て て 助詞 接続助詞
+dst 7 srcs 6
+食う 食う 動詞 自立
+という という 助詞 格助詞
+dst -1 srcs 7
+話 話 名詞 サ変接続
+で だ 助動詞 *
+ある ある 助動詞 *
+。 。 記号 句点
 '''
