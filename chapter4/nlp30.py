@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
 '''
 [{'base': '一', 'pos': '名詞', 'pos1': '数', 'surface': '一'},
- {'base': '\u3000', 'pos': '記号', 'pos1': '空白', 'surface': '\u3000'},
+ {'base': '　', 'pos': '記号', 'pos1': '空白', 'surface': '　'},
  {'base': '吾輩', 'pos': '名詞', 'pos1': '代名詞', 'surface': '吾輩'},
  {'base': 'は', 'pos': '助詞', 'pos1': '係助詞', 'surface': 'は'},
  {'base': '猫', 'pos': '名詞', 'pos1': '一般', 'surface': '猫'},
