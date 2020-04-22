@@ -24,7 +24,7 @@ class Chunk(object):
 
 def get_chunks(text):
     data = []
-    for sentence in re.findall(r'(\*[\s\S]*?EOS)', text):
+    for sentence in re.findall(r'(\n[\s\S]*?EOS)', text):
         chunks = []
         for clause in re.findall(
                 r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  #(srcs) (dst) (morphs)
@@ -52,29 +52,23 @@ if __name__ == "__main__":
 
 '''
 dst 1 srcs 0
-この この 連体詞 *
-dst 7 srcs 1
-書生 書生 名詞 一般
-という という 助詞 格助詞
-の の 名詞 非自立
+dst 5 srcs 0
+吾輩 吾輩 名詞 代名詞
 は は 助詞 係助詞
-dst 4 srcs 2
-時々 時々 副詞 一般
+dst 2 srcs 1
+ここ ここ 名詞 代名詞
+で で 助詞 格助詞
+dst 3 srcs 2
+始め 始める 動詞 自立
+て て 助詞 接続助詞
 dst 4 srcs 3
-我々 我々 名詞 代名詞
-を を 助詞 格助詞
-dst 5 srcs 4
-捕え 捕える 動詞 自立
-て て 助詞 接続助詞
-dst 6 srcs 5
-煮 煮る 動詞 自立
-て て 助詞 接続助詞
-dst 7 srcs 6
-食う 食う 動詞 自立
+人間 人間 名詞 一般
 という という 助詞 格助詞
-dst -1 srcs 7
-話 話 名詞 サ変接続
-で だ 助動詞 *
-ある ある 助動詞 *
+dst 5 srcs 4
+もの もの 名詞 非自立
+を を 助詞 格助詞
+dst -1 srcs 5
+見 見る 動詞 自立
+た た 助動詞 *
 。 。 記号 句点
 '''

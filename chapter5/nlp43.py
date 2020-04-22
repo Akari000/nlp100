@@ -35,5 +35,7 @@ with open('../data/neko.txt.cabocha', 'r') as f:
                   ('').join(dst_surface))
 
 '''
-我々を   捕えて
+吾輩は   見た
+ここで   始めて
+ものを   見た
 '''
