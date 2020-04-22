@@ -26,4 +26,4 @@ for word in c.most_common():
 plt.hist(ranks)
 plt.gca().set_yscale("log")
 plt.gca().set_xscale("log")
-plt.show()
+plt.savefig('../results/nlp39.png')

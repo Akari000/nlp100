@@ -4,21 +4,23 @@
 from nlp30 import get_morphs
 morphs = []
 
+# TODO プリントの部分でリストに格納するようにする
 with open('../data/neko.txt.mecab', 'r') as f:
     lines = f.readlines()
     morphs = get_morphs(lines)
 
 size = len(morphs)
+long_nouns = []
 for i, morph in enumerate(morphs[:-1]):
     if morph['pos'] == '名詞' and morphs[i+1]['pos'] == '名詞':
-        print(morph['surface'] + morphs[i+1]['surface'], end='')
+        long_noun = morph['surface'] + morphs[i+1]['surface']
         j = i+2
         while(j < size):
             if morphs[j]['pos'] == '名詞':
-                print(morphs[j]['surface'], end='')
+                long_noun += morphs[j]['surface']
                 j += 1
             else:
-                print()
+                long_nouns.append(long_noun)
                 break
 
 '''

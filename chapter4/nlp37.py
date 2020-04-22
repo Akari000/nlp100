@@ -7,6 +7,9 @@ import japanize_matplotlib
 from nlp30 import get_morphs
 morphs = []
 
+# TODO グラフはファイルに保存する
+# TODO グラフにラベルをつける
+
 with open('../data/neko.txt.mecab', 'r') as f:
     lines = f.readlines()
     morphs = get_morphs(lines)
@@ -16,9 +19,9 @@ c = collections.Counter(surfaces)
 
 surface = []
 count = []
-for line in c.most_common()[:10]:
+for line in c.most_common(10):
     surface.append(line[0])
     count.append(line[1])
 
 plt.bar(surface, count)
-plt.show()
+plt.savfig('../data/nlp37.png')

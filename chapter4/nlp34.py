@@ -8,7 +8,7 @@ with open('../data/neko.txt.mecab', 'r') as f:
     lines = f.readlines()
     morphs = get_morphs(lines)
 
-for i, morph in enumerate(morphs[1:-1], 1):
+for i, morph in enumerate(morphs[1:-1]):
     if morph['surface'] == 'の' \
        and morphs[i-1]['pos'] == '名詞' \
        and morphs[i+1]['pos'] == '名詞':

@@ -13,7 +13,7 @@ surfaces = [morph['surface'] for morph in morphs]
 count = collections.Counter(surfaces)
 
 for surface in count.most_common():
-    print(surface[0])
+    print(surface)
 
 
 '''
