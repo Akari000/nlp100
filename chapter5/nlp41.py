@@ -6,6 +6,7 @@
 
 import re
 
+# TODO 実例を書く
 
 class Morph(object):
     srcs = -1
@@ -28,6 +29,7 @@ class Chunk(object):
         surface = ('').join(surface)
         return re.sub(r'[、。]', '', surface)
 
+    # 以下は47から使用
     def apply_srcs(self):
         for morph in self.morphs:
             morph.srcs = self.srcs
@@ -50,7 +52,7 @@ def get_chunks(text):
     for sentence in re.findall(r'(\n[\s\S]*?EOS)', text):
         chunks = []
         for clause in re.findall(
-                r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  #(srcs) (dst) (morphs)
+                r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  # (srcs) (dst) (morphs)
             morphs = []
             for line in re.findall(r'(.*?)\t(.*?)(?:$|\n)', clause[2]):  # tab前から行末または\nまで
                 surface = line[0]

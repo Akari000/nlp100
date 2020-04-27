@@ -23,14 +23,12 @@ from nlp41 import get_chunks
 '''
 動詞のインデックスを取得
 インデックスで形態素を全て検索．助詞ならverbs['index']にリスト形式でsurfaceを保存．
-動詞の基本形をchunkのメンバ変数に入れておく
 '''
 chunks = ''
 with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
     chunks = get_chunks(text)[7]
 
-# TODO 基本形か判別する
 
 for chunk in chunks:
     nominatives = []

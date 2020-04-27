@@ -13,23 +13,13 @@ from nlp41 import get_chunks
 import re
 
 
-def get_path(chunks, i):
-    target = chunks[i].dst
-    if target == -1:
-        return ''
-    path = []
-    path.append(chunks[target].get_surface())
-    path += get_path(chunks, target)
-    return path
-
-
-def get_pire_path(chunks, i, j):
+def get_path(chunks, i, j=-1):
     target = chunks[i].dst
     if target == -1 or i == j-1:
         return ''
     path = []
     path.append(chunks[target].get_surface())
-    path += get_pire_path(chunks, target, j)
+    path += get_path(chunks, target, j)
     return path
 
 
@@ -37,7 +27,7 @@ def get_min_path(chunks, i, j):
     i_path = get_path(chunks, i)
     # 文節iから構文木の根に至る経路上に文節jが存在する場合
     if chunks[j].get_surface() in i_path:
-        path = get_pire_path(chunks, i, j)
+        path = get_path(chunks, i, j)
         if len(path) > 0:
             path = '-> ' + (' -> ').join(path) + ' ->'
         else:
@@ -53,7 +43,7 @@ def get_min_path(chunks, i, j):
         common = re.findall((' ').join(i_path[i:]), (' ').join(j_path))
         if len(common) > 0:
             sub = re.sub((' ').join(i_path[i:]), '', (' ').join(j_path))
-            sub = sub[:-1].split(' ')
+            sub = sub[:-1].split(' ')  # 空白が残るため-1
     if len(common) > 0:
         if sub == ['']:
             sub = chunks[j].replace_pos('名詞', 'X')
