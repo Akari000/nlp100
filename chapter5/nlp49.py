@@ -43,7 +43,8 @@ def get_min_path(chunks, i, j):
         else:
             path = '->'
         return '%s %s %s' % (
-            chunks[i].replace_surface('名詞', 'X'), path, 'Y')
+            chunks[i].replace_pos('名詞', 'X'), path, 'Y')
+
     # 文節iと文節jから構文木の根に至る経路上で共通の文節kで交わる場合:
     j_path = get_path(chunks, j)
     common = []
@@ -55,12 +56,12 @@ def get_min_path(chunks, i, j):
             sub = sub[:-1].split(' ')
     if len(common) > 0:
         if sub == ['']:
-            sub = chunks[j].get_surface()
+            sub = chunks[j].replace_pos('名詞', 'X')
         else:
-            sub = [chunks[j].get_surface()] + sub
+            sub = [chunks[j].replace_pos('名詞', 'X')] + sub
             sub = (' -> ').join(sub)
         return '%s | %s | %s' % (
-            chunks[i].get_surface(),
+            chunks[i].replace_pos('名詞', 'X'),
             sub,
             ('').join(common))
     return ''
@@ -83,10 +84,10 @@ for i in range(len(chunks)):
 
 
 '''
-吾輩は | ここで -> 始めて -> 人間という -> ものを | 見た
-吾輩は | 人間という -> ものを | 見た
-吾輩は | ものを | 見た
-ここで -> 始めて -> 人間という
-ここで -> 始めて -> 人間という -> ものを
-人間という -> ものを
+Xは | Xで -> 始めて -> 人間という -> ものを | 見た
+Xは | Xという -> ものを | 見た
+Xは | Xを | 見た
+Xで -> 始めて -> Y
+Xで -> 始めて -> 人間という -> Y
+Xという -> Y
 '''

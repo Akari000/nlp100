@@ -35,7 +35,7 @@ class Chunk(object):
     def has_noun(self):
         return '名詞' in [morph.pos for morph in self.morphs]
 
-    def replace_surface(self, pos, X):
+    def replace_pos(self, pos, X):
         surface = ''
         for morph in self.morphs:
             if morph.pos == pos:

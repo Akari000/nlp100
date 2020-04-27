@@ -27,7 +27,7 @@ for sentence in text.split('EOS\n')[:6]:
         morph_list.append(morph)
 
 
-print('surface', morph_list[2].surface)
+print('surface', morph_list[0].surface)
 print('base', morph_list[2].base)
 print('pos', morph_list[2].pos)
 print('pos1', morph_list[2].pos1)
