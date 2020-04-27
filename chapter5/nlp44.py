@@ -7,6 +7,8 @@ import pydot
 from IPython.display import Image
 from nlp41 import get_chunks
 
+# TODO edgeを矢印にする
+
 graph = pydot.Dot(graph_type='graph')
 chunks = ''
 

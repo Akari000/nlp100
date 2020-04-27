@@ -31,6 +31,10 @@ def get_nominatives(chunks, target_idx):
         result['chunks'] = re.sub(r'[、。]', '', result['chunks'])
     return result
 
+# 考え方を変える．
+# 1. 動詞にかかるサ変+をを抽出
+# 2. 動詞を探す→係もとの「サ変+を」を探す
+
 
 def get_funktionsverben(chunks):
     for chunk in chunks:

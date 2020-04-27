@@ -12,6 +12,9 @@
 from nlp41 import get_chunks
 import re
 
+# TODO path を探すとき，yから遡っても良い
+# TODO 変数名 sub -> diffに変えても良い,もしくは破壊的にpathを変えても良い
+
 
 def get_path(chunks, i, j=-1):
     target = chunks[i].dst
@@ -64,10 +67,8 @@ with open('../data/neko.txt.cabocha', 'r') as f:
 
 
 for i in range(len(chunks)):
-    if(not chunks[i].has_noun()):
-        continue
     for j in range(i+1, len(chunks)):
-        if(not chunks[j].has_noun()):
+        if not chunks[i].has_noun() or not chunks[j].has_noun():
             continue
         path = get_min_path(chunks, i, j)
         print(path)

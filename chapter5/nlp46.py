@@ -18,6 +18,8 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
     chunks = get_chunks(text)[7]
 
+# TODO 変数名の修正nominatives -> particles (助詞の集合)
+# nominative_chunks -> clauses (文節の集合)
 
 for chunk in chunks:
     nominatives = []

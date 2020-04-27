@@ -54,14 +54,17 @@ def get_chunks(text):
     for sentence in re.findall(r'(\n[\s\S]*?EOS)', text):
         chunks = []
         for clause in re.findall(
-                r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  # (srcs) (dst) (morphs)
+                r'\* (\d*) (-?\d+).*?\n([\s\S]*?)(?=\n\*|\nEOS)', sentence):  # (index) (dst) (morphs)
             morphs = []
+            srcs = re.findall(
+                r'\* (\d*) ' + clause[0] + r'D.*?\n[\s\S]*?(?=\n\*|\nEOS)',
+                sentence)
             for line in re.findall(r'(.*?)\t(.*?)(?:$|\n)', clause[2]):  # tab前から行末または\nまで
                 surface = line[0]
                 feature = line[1].split(',')
                 morph = Morph(surface, feature[6], feature[0], feature[1])
                 morphs.append(morph)
-            chunk = Chunk(morphs, int(clause[1]), int(clause[0]))
+            chunk = Chunk(morphs, int(clause[1]), srcs)
             chunks.append(chunk)
         data.append(chunks)
     return data
@@ -78,23 +81,22 @@ if __name__ == "__main__":
 
 
 '''
-dst 1 srcs 0
-dst 5 srcs 0
+dst 5 srcs []
 吾輩 吾輩 名詞 代名詞
 は は 助詞 係助詞
-dst 2 srcs 1
+dst 2 srcs []
 ここ ここ 名詞 代名詞
 で で 助詞 格助詞
-dst 3 srcs 2
+dst 3 srcs ['1']
 始め 始める 動詞 自立
 て て 助詞 接続助詞
-dst 4 srcs 3
+dst 4 srcs ['2']
 人間 人間 名詞 一般
 という という 助詞 格助詞
-dst 5 srcs 4
+dst 5 srcs ['3']
 もの もの 名詞 非自立
 を を 助詞 格助詞
-dst -1 srcs 5
+dst -1 srcs ['0', '4']
 見 見る 動詞 自立
 た た 助動詞 *
 。 。 記号 句点

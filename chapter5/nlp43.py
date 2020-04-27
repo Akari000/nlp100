@@ -11,28 +11,28 @@ with open('../data/neko.txt.cabocha', 'r') as f:
         if chunk.dst == -1:
             continue
         dst_pos = []
-        srcs_pos = []
-        dst_surface = []
-        srcs_surface = []
+        pos = []
+        dst_surfaces = []
+        surfaces = []
         dst_morphs = chunks[chunk.dst].morphs
 
         for morph in chunk.morphs:
             if morph.pos == '記号':
                 continue
-            srcs_pos.append(morph.pos)
-            srcs_surface.append(morph.surface)
-        if '名詞' not in srcs_pos:
+            pos.append(morph.pos)
+            surfaces.append(morph.surface)
+        if '名詞' not in pos:
             continue
 
         for morph in dst_morphs:
             if morph.pos == '記号':
                 continue
             dst_pos.append(morph.pos)
-            dst_surface.append(morph.surface)
+            dst_surfaces.append(morph.surface)
         if '動詞' in dst_pos:
             print('%s\t' %
-                  ('').join(srcs_surface),
-                  ('').join(dst_surface))
+                  ('').join(surfaces),
+                  ('').join(dst_surfaces))
 
 '''
 吾輩は   見た

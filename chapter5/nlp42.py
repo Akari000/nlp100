@@ -10,14 +10,10 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     for chunk in chunks:
         if chunk.dst == -1:
             continue
-        for morph in chunk.morphs:              # 係元
-            print(morph.surface, end='')
-        print('\t', end='')
-        for morph in chunks[chunk.dst].morphs:  # 係先
-            if morph.pos == '記号':
-                break
-            print(morph.surface, end='')
-        print()
+        print('%s\t%s' % (
+            chunk.get_surface(),                # 係元
+            chunks[chunk.dst].get_surface()     # 係先
+        ))
 
 
 '''

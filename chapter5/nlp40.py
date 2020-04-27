@@ -26,15 +26,8 @@ for sentence in text.split('EOS\n')[:6]:
         morph = Morph(surface, line[6], line[0], line[1])
         morph_list.append(morph)
 
-
-print('surface', morph_list[0].surface)
-print('base', morph_list[2].base)
-print('pos', morph_list[2].pos)
-print('pos1', morph_list[2].pos1)
+print(morph_list[2].__dict__.values())
 
 '''
-surface 吾輩
-base 吾輩
-pos 名詞
-pos1 代名詞
+dict_values(['吾輩', '吾輩', '名詞', '代名詞'])
 '''
