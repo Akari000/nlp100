@@ -4,7 +4,6 @@
 # また，Pythonから有向グラフを直接的に可視化するには，pydotを使うとよい．
 
 import pydot
-import matplotlib.pyplot as plt
 from IPython.display import Image
 from nlp41 import get_chunks
 
@@ -22,6 +21,6 @@ for chunk in chunks:
     edge = pydot.Edge(surface, dst_surface)
     graph.add_edge(edge)
 
-
-graph.write('../data/nlp44.png', format="png")
+# 丸が余計に入ってしまうのはなぜ
+graph.write('../results/nlp44.png', format="png")
 Image(graph.create(format='png'))

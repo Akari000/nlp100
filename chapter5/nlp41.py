@@ -7,6 +7,8 @@
 import re
 
 # TODO 実例を書く
+# TODO srcsを係り元文節インデックス番号のリストにする ex) srcs = [2,3,4]
+
 
 class Morph(object):
     srcs = -1
