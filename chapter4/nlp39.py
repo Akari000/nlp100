@@ -10,20 +10,14 @@ with open('../data/neko.txt.mecab', 'r') as f:
     lines = f.readlines()
     morphs = get_morphs(lines)
 
+# TODO 畢沅頻度のままで良い．両対数グラフにするだけで良い．
+
 
 surfaces = [morph['surface'] for morph in morphs]
 c = collections.Counter(surfaces)
 
-ranks = []
-rank = 0
-current = 0
-for word in c.most_common():
-    if current != word[1]:
-        current = word[1]
-        rank += 1
-    ranks.append(rank)
-
-plt.hist(ranks)
+count = [line[1] for line in c.most_common()]
+plt.hist(count, range=(0, 50))
 plt.gca().set_yscale("log")
 plt.gca().set_xscale("log")
 plt.savefig('../results/nlp39.png')

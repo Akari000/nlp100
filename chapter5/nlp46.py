@@ -18,8 +18,6 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
     chunks = get_chunks(text)[7]
 
-# TODO 基本形か判別する
-
 
 def get_surface(chunk):
     surface = [morph.surface for morph in chunk.morphs]

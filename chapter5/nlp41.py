@@ -8,6 +8,8 @@ import re
 
 
 class Morph(object):
+    srcs = -1
+
     def __init__(self, surface, base, pos, pos1):
         self.surface = surface
         self.base = base
@@ -20,6 +22,27 @@ class Chunk(object):
         self.morphs = morphs
         self.dst = dst
         self.srcs = srcs
+
+    def get_surface(self):
+        surface = [morph.surface for morph in self.morphs]
+        surface = ('').join(surface)
+        return re.sub(r'[、。]', '', surface)
+
+    def apply_srcs(self):
+        for morph in self.morphs:
+            morph.srcs = self.srcs
+
+    def has_noun(self):
+        return '名詞' in [morph.pos for morph in self.morphs]
+
+    def replace_surface(self, pos, X):
+        surface = ''
+        for morph in self.morphs:
+            if morph.pos == pos:
+                surface += X
+            else:
+                surface += morph.surface
+        return re.sub(r'[、。]', '', surface)
 
 
 def get_chunks(text):
