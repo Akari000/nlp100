@@ -29,7 +29,7 @@ class Chunk(object):
         surface = ('').join(surface)
         return re.sub(r'[、。]', '', surface)
 
-    # 以下は47から使用
+    # 以下は46.から使用
     def apply_srcs(self):
         for morph in self.morphs:
             morph.srcs = self.srcs

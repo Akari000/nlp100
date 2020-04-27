@@ -19,11 +19,6 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     chunks = get_chunks(text)[7]
 
 
-def get_surface(chunk):
-    surface = [morph.surface for morph in chunk.morphs]
-    return ('').join(surface)
-
-
 for chunk in chunks:
     nominatives = []
     nominative_chunks = []
@@ -35,7 +30,7 @@ for chunk in chunks:
         for morph in dst_chunk.morphs:
             if morph.pos == '助詞':
                 nominatives.append(morph.surface)
-                nominative_chunks.append(get_surface(dst_chunk))
+                nominative_chunks.append(dst_chunk.get_surface())
     if len(nominatives) < 1:
         continue
     nominatives = (' ').join(nominatives)
