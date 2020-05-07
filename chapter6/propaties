@@ -1,0 +1,3 @@
+annotators = tokenize,ssplit,pos,lemma,ner,coref
+outputExtension = .output
+outputFormat = text
