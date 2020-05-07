@@ -19,23 +19,23 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
     chunks = get_chunks(text)[7]
 
-# TODO 途中で動詞が出てきた場合も考える
 # TODO UNIXコマンドで確認する
 
-for chunk in chunks:
-    nominatives = []
-    if chunk.morphs[0].pos != '動詞':
+for ind, chunk in enumerate(chunks):
+    particles = []
+    if not chunk.has_pos('動詞'):
         continue
-    for dst_chunk in chunks:
-        if dst_chunk.dst != chunk.srcs:
-            continue
-        nominatives += [morph.surface for morph in dst_chunk.morphs
-                        if morph.pos == '助詞']
-    if len(nominatives) < 1:
+
+    for index in chunk.srcs:
+        dst_chunk = chunks[index]
+        particles += [morph.surface for morph in dst_chunk.morphs
+                      if morph.pos == '助詞']
+    if len(particles) < 1:
         continue
-    nominatives = (' ').join(nominatives)
+    verb = chunk.get_pos('動詞')[0]
+    particles = (' ').join(particles)
     print('%s\t%s' %
-          (chunk.morphs[0].base, nominatives))
+          (verb.base, particles))
 
 
 '''

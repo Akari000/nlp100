@@ -21,7 +21,7 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     data = get_chunks(text)
     chunks = data[7]
     for chunk in chunks:
-        if(chunk.has_noun()):
+        if(chunk.has_pos('名詞')):
             path = get_path(chunks, chunk.dst, chunk.get_surface())
             print(path)
 

@@ -18,27 +18,23 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     text = f.read()
     chunks = get_chunks(text)[7]
 
-# TODO 変数名の修正nominatives -> particles (助詞の集合)
-# nominative_chunks -> clauses (文節の集合)
-
 for chunk in chunks:
-    nominatives = []
-    nominative_chunks = []
+    particles = []
+    clauses = []
     if chunk.morphs[0].pos != '動詞':
         continue
-    for dst_chunk in chunks:
-        if dst_chunk.dst != chunk.srcs:
-            continue
+    for index in chunk.srcs:
+        dst_chunk = chunks[index]
         for morph in dst_chunk.morphs:
             if morph.pos == '助詞':
-                nominatives.append(morph.surface)
-                nominative_chunks.append(dst_chunk.get_surface())
-    if len(nominatives) < 1:
+                particles.append(morph.surface)
+                clauses.append(dst_chunk.get_surface())
+    if len(particles) < 1:
         continue
-    nominatives = (' ').join(nominatives)
-    nominative_chunks = (' ').join(nominative_chunks)
+    particles = (' ').join(particles)
+    clauses = (' ').join(clauses)
     print('%s\t%s\t%s' %
-          (chunk.morphs[0].base, nominatives, nominative_chunks))
+          (chunk.morphs[0].base, particles, clauses))
 
 
 '''

@@ -68,7 +68,7 @@ with open('../data/neko.txt.cabocha', 'r') as f:
 
 for i in range(len(chunks)):
     for j in range(i+1, len(chunks)):
-        if not chunks[i].has_noun() or not chunks[j].has_noun():
+        if not chunks[i].has_pos('名詞') or not chunks[j].has_pos('名詞'):
             continue
         path = get_min_path(chunks, i, j)
         print(path)

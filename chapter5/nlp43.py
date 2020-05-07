@@ -16,7 +16,7 @@ with open('../data/neko.txt.cabocha', 'r') as f:
         surfaces = []
         dst_morphs = chunks[chunk.dst].morphs
 
-        for morph in chunk.morphs:
+        for morph in chunk.morphs:  # 係り先
             if morph.pos == '記号':
                 continue
             pos.append(morph.pos)
@@ -24,7 +24,7 @@ with open('../data/neko.txt.cabocha', 'r') as f:
         if '名詞' not in pos:
             continue
 
-        for morph in dst_morphs:
+        for morph in dst_morphs:    # 係り元
             if morph.pos == '記号':
                 continue
             dst_pos.append(morph.pos)

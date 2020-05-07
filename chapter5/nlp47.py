@@ -37,8 +37,8 @@ def get_nominatives(chunks, target_idx):
 
 
 def get_funktionsverben(chunks):
-    for chunk in chunks:
-        chunk.apply_srcs()
+    for index, chunk in enumerate(chunks):
+        chunk.apply_index(index)
     flat_morphs = [chunk.morphs for chunk in chunks]
     flat_morphs = list(flatten(flat_morphs))
     results = []

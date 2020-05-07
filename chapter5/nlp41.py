@@ -31,13 +31,17 @@ class Chunk(object):
         surface = ('').join(surface)
         return re.sub(r'[、。]', '', surface)
 
-    # 以下は46.から使用
-    def apply_srcs(self):
-        for morph in self.morphs:
-            morph.srcs = self.srcs
+    def get_pos(self, pos):
+        return [morph for morph in self.morphs
+                if morph.pos == pos]
 
-    def has_noun(self):
-        return '名詞' in [morph.pos for morph in self.morphs]
+    # 以下は46.から使用
+    def apply_index(self, index):
+        for morph in self.morphs:
+            morph.chunk_id = index
+
+    def has_pos(self, pos):
+        return pos in [morph.pos for morph in self.morphs]
 
     def replace_pos(self, pos, X):
         surface = ''
@@ -64,7 +68,7 @@ def get_chunks(text):
                 feature = line[1].split(',')
                 morph = Morph(surface, feature[6], feature[0], feature[1])
                 morphs.append(morph)
-            chunk = Chunk(morphs, int(clause[1]), srcs)
+            chunk = Chunk(morphs, int(clause[1]), list(map(int, srcs)))
             chunks.append(chunk)
         data.append(chunks)
     return data

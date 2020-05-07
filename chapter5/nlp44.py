@@ -7,9 +7,7 @@ import pydot
 from IPython.display import Image
 from nlp41 import get_chunks
 
-# TODO edgeを矢印にする
-
-graph = pydot.Dot(graph_type='graph')
+graph = pydot.Dot(graph_type='digraph')
 chunks = ''
 
 with open('../data/neko.txt.cabocha', 'r') as f:
@@ -17,12 +15,12 @@ with open('../data/neko.txt.cabocha', 'r') as f:
     chunks = get_chunks(text)[7]
 
 for chunk in chunks:
-    dst_morphs = chunks[chunk.dst].morphs
-    surface = ('').join([morph.surface for morph in chunk.morphs])
-    dst_surface = ('').join([morph.surface for morph in dst_morphs])
+    if chunk.dst == -1:
+        continue
+    surface = chunk.get_surface()
+    dst_surface = chunks[chunk.dst].get_surface()
     edge = pydot.Edge(surface, dst_surface)
     graph.add_edge(edge)
 
-# 丸が余計に入ってしまうのはなぜ
 graph.write('../results/nlp44.png', format="png")
 Image(graph.create(format='png'))
