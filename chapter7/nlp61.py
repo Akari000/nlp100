@@ -5,8 +5,14 @@
 import redis
 
 r = redis.Redis(host='localhost', port=6379, db=0)
-area = r.get('Sweety')
-print(area.decode())
+
+
+def get_area(name):
+    area = r.get(name)
+    return area.decode()
+
+
+print(get_area('Sweety'))
 
 '''
 Japan

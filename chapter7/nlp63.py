@@ -19,9 +19,13 @@ with gzip.open('../data/artist.json.gz', 'rt') as f:
             r.rpush(data['name'], tag)
 
 
-for tag in r.lrange('Sweety', 0, -1):
-    tag = json.loads(tag)
-    print(tag['value'], tag['count'])
+def get_tags(name):
+    for tag in r.lrange(name, 0, -1):
+        tag = json.loads(tag)
+        print(tag['value'], tag['count'])
+
+
+get_tags('Sweety')
 
 '''
 mandopop 1

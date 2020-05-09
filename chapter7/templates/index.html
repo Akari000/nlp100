@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<title>nlp69.</title>
+</head>
+<body>
+<form action="/filter_by_name" method="POST">
+    <input type="text" name="name" placeholder="name">
+</form>
+<form action="/filter_by_aliase" method="POST">
+    <input type="text" name="aliase" placeholder="aliase">
+</form>
+<form action="/filter_by_tag" method="POST">
+    <input type="text" name="tag" placeholder="tag">
+</form>
+<form action="/clear" method="POST">
+    <input type="submit" value="検索条件をクリア" placeholder="clear">
+</form>
+<table>
+    <tr>
+      <th>name</th>
+      <th>area</th>
+      <th>aliases</th>
+      <th>tags</th>
+    </tr>
+    {% for doc in documents %}
+        <tr>
+            <td>{{doc.name}}</td>
+            <td>{{doc.area}}</td>
+            <td>{{doc.tags}}</td>
+            <td>{{doc.aliases}}</td>
+        </tr>
+    {% endfor %}    
+</table>
+</body>
+</html>
+
+<style>
+table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  /* width: 100%; */
+}
+
+table tr{
+  border-bottom: solid 1px #eee;
+}
+
+table th,table td{
+  text-align: center;
+  width: 20%;
+  padding: 10px 0;
+}
+
+
+</style>
