@@ -24,39 +24,39 @@ class Dependent():
 
 
 sentence_pattern = r'<sentence id="\d+">([\s\S]*?)</sentence>'
-token_pattern = r'<token id="\d+">\s*?'\
-                + r'<word>(.*?)</word>[\s\S]*?</token>'
 deps_pattern = r'<dependencies type="basic-dependencies">[\s\S]*?</dependencies>'
 dep_pattern = r'\<dep type="(.*?)">[\s\S]*?'\
               + r'<governor idx="(\d+)">(.*?)</governor>\s*?'\
               + r'<dependent idx="(\d+)">(.*?)</dependent>\s*?'\
               + r'</dep>'
 
+'''
+1. nsubj関係とdobj関係を書き出す
+2. 親が一致したら出力
+'''
 
 with open('../data/nlp.txt.xml', 'r') as f:
     text = f.read()
 
 
 for sentence in re.findall(sentence_pattern, text):
-    tokens = re.findall(token_pattern, sentence)
     dep = re.findall(deps_pattern, sentence)
     if len(dep) < 1:
         continue
-    deps = []
+
+    subjects = []   # 主語　(nsubj関係の子を持つdepの集合)
+    objects = []    # 目的語  (dobj関係の子を持つdepの集合)
     for dep in re.findall(dep_pattern, dep[0]):
         dep = Dependent(dep[0], dep[1], dep[2], dep[3], dep[4])
-        deps.append(dep)
-    subjects = []
-    objects = []
-    for dep in deps:
         if dep.type == 'nsubj':
             subjects.append(dep)
         elif dep.type == 'dobj':
             objects.append(dep)
+
     for subject in subjects:
         for obj in objects:
             if subject.gov_id == obj.gov_id:
-                predicate = subject.gov
+                predicate = subject.gov     # 述語
                 print('%s\t%s\t%s' % (subject.dep, predicate, obj.dep))
 
 '''

@@ -1,5 +1,6 @@
 '''59. S式の解析
-Stanford Core NLPの句構造解析の結果（S式）を読み込み，文中のすべての名詞句（NP）を表示せよ．入れ子になっている名詞句もすべて表示すること．
+Stanford Core NLPの句構造解析の結果（S式）を読み込み，文中のすべての名詞句（NP）を表示せよ．
+入れ子になっている名詞句もすべて表示すること．
 '''
 
 import re
@@ -8,112 +9,69 @@ sentence_pattern = r'<sentence id="\d+">([\s\S]*?)</sentence>'
 token_pattern = r'<token id="\d+">\s*?'\
                 + r'<word>(.*?)</word>[\s\S]*?</token>'
 parse_pattern = r'<parse>([\s\S]*?) </parse>'
-'''
-S式の構造
-ROOT, document, sentences, sentence, parse
-(ROOT 
-    (S 
-        (NP 
-            (NP 
-                (NN History) 
-                (DT The) 
-                (NN history)
-            ) 
-            (PP 
-                (IN of) 
-                (NP 
-                    (NN NLP)
-                )
-            )
-        ) 
-        (ADVP
-            (RB generally)
-        ) 
-        (VP 
-            (VBZ starts) 
-            (PP 
-                (IN in) 
-                (NP 
-                    (DT the) 
-                    (CD 1950s)
-                )
-            ) 
-            (, ,) 
-            (SBAR 
-                (IN although) 
-                (S 
-                    (NP 
-                        (NN work)
-                    ) 
-                    (VP 
-                        (MD can) 
-                        (VP 
-                            (VB be) 
-                            (VP 
-                                (VBN found) 
-                                (PP 
-                                    (IN from) 
-                                    (NP 
-                                        (JJR earlier) 
-                                        (NNS periods)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        ) 
-        (. .)
-    )
-)
-'''
-'''
-nodeを全て定義する．再帰処理でvalueがNPの子ノードを探す．
-見つけたらプリントする．
-'''
 
 
 class Node():
-    def __init__(self, child, value):
-        self.child = child
-        self.value = value
+    def __init__(self, childlen, key):
+        self.childlen = childlen
+        self.key = key
 
-    def get_values(self):
-        if self.child == -1:
-            return self.value
-        return self.get_values(self.child)
+    def search_keys(self):
+        if self.child == []:
+            return self.key
+        return self.get_keys(self.childlen)
+
+    def values(self):
+        if isinstance(self.childlen, list):
+            for child in self.childlen:
+                child.values()
+        else:
+            print(self.childlen, end=' ')
+
+    def search_key(self, key):
+        if self.key == key:
+            self.values()
+            print()
+        if isinstance(self.childlen, list):
+            for child in self.childlen:
+                child.search_key(key)
 
 
-def s_paser(text):
-    if text[0] != '(' or text[-1] != ')':
-        print('parse error', text[0], text[-1])
-        return -1
-
+def get_key(text):
+    # 形は1パターン
+    # (key value)
     value = ''
-    childlen = []
-    child_head = -1
-    for index, t in enumerate(text[1:], 1):  # valueの抽出
-        if t == '(' or t == ')':
-            child_head = index
-            break
-        value += t
+    text = re.findall(r'(.*?) (.*)', text[1:-1])[0]
+    key = text[0]
+    value = text[1]
+    return key, value
 
-    if child_head == -1:  # 子がいないとき
-        return Node(childlen, value)
 
+def get_childlen(text):
+    # 形は2パターン
+    # 1. (child)(child)
+    # 2. value
+    if text[0] != '(':  # 子がいないとき
+        return text
+
+    head = 0
     count = 0
-    for index, t in enumerate(text[child_head:], child_head):
+    childlen = []
+    for index, t in enumerate(text):
         if t == '(':
             count += 1
         elif t == ')':
             count -= 1
         if count == 0:  # 子が閉じたとき
-            child = text[child_head:index]
-            child = s_paser(child)
-            child_head = index
+            child = text[head:index+1]
+            if index < head:  # 2つ飛ばす
+                continue
+            key, value = get_key(child)
+            c_childlen = get_childlen(value)
+            child = Node(c_childlen, key)
+            head = index + 2
             childlen.append(child)
-    return Node(childlen, value)
+    return childlen
 
 
 with open('../data/nlp.txt.xml', 'r') as f:
@@ -122,6 +80,31 @@ with open('../data/nlp.txt.xml', 'r') as f:
 for sentence in re.findall(sentence_pattern, text):
     tokens = re.findall(token_pattern, sentence)
     pares = re.findall(parse_pattern, sentence)[0]
-    pares = s_paser(pares)
-    # print(pares.child, end='')
-    print('====')
+
+    key, value = get_key(pares)
+    childlen = get_childlen(value)
+    node = Node(childlen, key)
+    node.search_key('NP')
+
+
+'''
+(ROOT (S (PP (NP (JJ Natural) (NN language) (NN processing)) (IN From) (NP (NNP Wikipedia))) (, ,) (NP (NP (DT the) (JJ free) (NN encyclopedia) (JJ Natural) (NN language) (NN processing)) (PRN (-LRB- -LRB-) (NP (NN NLP)) (-RRB- -RRB-))) (VP (VBZ is) (NP (NP (NP (DT a) (NN field)) (PP (IN of) (NP (NN computer) (NN science)))) (, ,) (NP (JJ artificial) (NN intelligence)) (, ,) (CC and) (NP (NP (NNS linguistics)) (VP (VBN concerned) (PP (IN with) (NP (NP (DT the) (NNS interactions)) (PP (IN between) (NP (NP (NNS computers)) (CC and) (NP (JJ human) (-LRB- -LRB-) (JJ natural) (-RRB- -RRB-) (NNS languages)))))))))) (. .)))
+
+Natural language processing
+Wikipedia
+the free encyclopedia Natural language processing -LRB- NLP -RRB-
+the free encyclopedia Natural language processing
+NLP
+a field of computer science , artificial intelligence , and linguistics concerned with the interactions between computers and human -LRB- natural -RRB- languages
+a field of computer science
+a field
+computer science
+artificial intelligence
+linguistics concerned with the interactions between computers and human -LRB- natural -RRB- languages
+linguistics
+the interactions between computers and human -LRB- natural -RRB- languages
+the interactions
+computers and human -LRB- natural -RRB- languages
+computers
+human -LRB- natural -RRB- languages
+'''

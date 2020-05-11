@@ -16,11 +16,11 @@ dep_pattern = r'\<dep [\s\S]*?'\
               + r'<dependent idx="(\d+)">(.*?)</dependent>\s*?'\
               + r'</dep>'
 graph = pydot.Dot(graph_type='digraph')
+sentences = {}
 
 with open('../data/nlptest.txt.xml', 'r') as f:
     text = f.read()
 
-sentences = {}
 for sentence in re.findall(sentence_pattern, text):
     sentence_id = sentence[0]
     sentence = sentence[1]
@@ -28,18 +28,17 @@ for sentence in re.findall(sentence_pattern, text):
     if len(deps) < 1:
         continue
     for dep in re.findall(dep_pattern, deps[0]):
-        if dep[0] == '0':
+        if dep[0] == '0':  # ROOTの場合
             continue
-        print(dep)
-        child = dep[0]
-        child_surface = dep[1]
-        parent = dep[2]
-        parent_surface = dep[3]
+        child_id = dep[0]
+        child = dep[1]
+        parent_id = dep[2]
+        parent = dep[3]
 
-        node = pydot.Node(parent, label=parent_surface)  # add parent node
+        node = pydot.Node(parent_id, label=parent)  # add parent node
         graph.add_node(node)
-        node = pydot.Node(child, label=child_surface)    # add child node
+        node = pydot.Node(child_id, label=child)    # add child node
         graph.add_node(node)
-        edge = pydot.Edge(parent, child)
+        edge = pydot.Edge(parent_id, child_id)
         graph.add_edge(edge)
         graph.write('../results/nlp57-%s.png' % (sentence_id), format="png")
