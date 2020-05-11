@@ -66,9 +66,9 @@ def get_childlen(text):
         elif t == ')':
             count -= 1
         if count == 0:  # 子が閉じたとき
-            child = text[head:index+1]
             if index < head:  # 2つ飛ばす
                 continue
+            child = text[head:index+1]
             key, value = get_key(child)
             c_childlen = get_childlen(value)
             child = Node(c_childlen, key)
