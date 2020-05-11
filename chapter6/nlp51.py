@@ -3,10 +3,11 @@
 ただし，文の終端では空行を出力せよ．
 '''
 from nlp50 import get_sentences
+import re
 
 
 def tokenize(sentence):
-    return sentence.replace(',', '').split(' ')
+    return re.sub(r'[\.;:\?!,]', '', sentence).split(' ')
 
 
 if __name__ == "__main__":

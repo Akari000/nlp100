@@ -8,7 +8,9 @@ with open('../data/nlp.txt.xml', 'r') as f:
 
 tokens = re.findall(r'<token id="\d+">([\s\S]*?)</token>', text)
 for token in tokens[:10]:
-    print(re.sub(r'\s{2,}', '', token))
+    pattern = r'<word>(.*?)</word>\s*?'
+    data = re.findall(pattern, token)[0]
+    print('%s' % (data))
 
 '''
 <word>Natural</word><lemma>natural</lemma><CharacterOffsetBegin>0</CharacterOffsetBegin><CharacterOffsetEnd>7</CharacterOffsetEnd><POS>JJ</POS><NER>O</NER>
