@@ -2,6 +2,10 @@
 Stanford Core NLPの解析結果XMLを読み込み，単語，レンマ，品詞をタブ区切り形式で出力せよ．
 '''
 import re
+import xml.etree.ElementTree as ET
+tree = ET.parse('../data/nlp.txt.xml')
+root = tree.getroot()
+
 with open('../data/nlp.txt.xml', 'r') as f:
     text = f.read()
 

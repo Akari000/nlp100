@@ -6,6 +6,9 @@ import re
 with open('../data/nlp.txt.xml', 'r') as f:
     text = f.read()
 
+# xml.etreeを使う
+
+
 tokens = re.findall(r'<token id="\d+">([\s\S]*?)</token>', text)
 for token in tokens[:10]:
     pattern = r'<word>(.*?)</word>\s*?'

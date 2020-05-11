@@ -15,13 +15,14 @@ dep_pattern = r'\<dep [\s\S]*?'\
               + r'<governor idx="(\d+)">(.*?)</governor>\s*?'\
               + r'<dependent idx="(\d+)">(.*?)</dependent>\s*?'\
               + r'</dep>'
-graph = pydot.Dot(graph_type='digraph')
+
 sentences = {}
 
 with open('../data/nlptest.txt.xml', 'r') as f:
     text = f.read()
 
 for sentence in re.findall(sentence_pattern, text):
+    graph = pydot.Dot(graph_type='digraph')
     sentence_id = sentence[0]
     sentence = sentence[1]
     deps = re.findall(deps_pattern, sentence)
@@ -34,7 +35,6 @@ for sentence in re.findall(sentence_pattern, text):
         child = dep[1]
         parent_id = dep[2]
         parent = dep[3]
-
         node = pydot.Node(parent_id, label=parent)  # add parent node
         graph.add_node(node)
         node = pydot.Node(child_id, label=child)    # add child node
