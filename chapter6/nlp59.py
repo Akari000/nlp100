@@ -5,6 +5,8 @@ Stanford Core NLPの句構造解析の結果（S式）を読み込み，文中�
 
 import re
 
+# TODO 変数の名前を見直す
+
 sentence_pattern = r'<sentence id="\d+">([\s\S]*?)</sentence>'
 token_pattern = r'<token id="\d+">\s*?'\
                 + r'<word>(.*?)</word>[\s\S]*?</token>'
