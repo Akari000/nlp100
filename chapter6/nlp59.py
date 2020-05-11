@@ -51,9 +51,12 @@ def get_childlen(text):
     # 形は2パターン
     # 1. (child)(child)
     # 2. value
-    if text[0] != '(':  # 子がいないとき
+
+    # 子がいないとき
+    if text[0] != '(':
         return text
 
+    # 子がいるとき
     head = 0
     count = 0
     childlen = []
@@ -69,7 +72,7 @@ def get_childlen(text):
             key, value = get_key(child)
             c_childlen = get_childlen(value)
             child = Node(c_childlen, key)
-            head = index + 2
+            head = index + 2  # space と )を除く
             childlen.append(child)
     return childlen
 

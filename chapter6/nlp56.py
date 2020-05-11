@@ -10,7 +10,7 @@ with open('../data/nlp.txt.xml', 'r') as f:
 
 # TODO startが同じものはどれか一つを採用する
 # TODO tokensもdictでkeyを指定して保存する
-
+# 変換tableを作るのもあり　table[sentence_id][token_id] = 変換したい語
 
 sentence_pattern = r'<sentence id="(\d+)">([\s\S]*?)</sentence>'
 token_pattern = r'<token id="\d+">\s*?'\

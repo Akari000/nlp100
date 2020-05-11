@@ -41,4 +41,4 @@ for sentence in re.findall(sentence_pattern, text):
         graph.add_node(node)
         edge = pydot.Edge(parent_id, child_id)
         graph.add_edge(edge)
-        graph.write('../results/nlp57-%s.png' % (sentence_id), format="png")
+    graph.write('../results/nlp57-%s.png' % (sentence_id), format="png")
