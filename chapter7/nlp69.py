@@ -17,7 +17,8 @@ query = {}
 
 @app.route('/')
 def home(query=query):
-    documents = collection.find(filter=query).limit(20)
+    documents = collection.find(
+        filter=query).sort([("rating.count", -1)]).limit(20)
     return render_template(
         'index.html',
         documents=documents)

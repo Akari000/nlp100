@@ -20,15 +20,23 @@
     <tr>
       <th>name</th>
       <th>area</th>
-      <th>aliases</th>
       <th>tags</th>
+      <th>aliases</th>
     </tr>
     {% for doc in documents %}
         <tr>
             <td>{{doc.name}}</td>
             <td>{{doc.area}}</td>
-            <td>{{doc.tags}}</td>
-            <td>{{doc.aliases}}</td>
+            <td>
+              {% for tag in doc.tags %}
+                <span>{{tag.value}}</span>
+              {% endfor %}
+            </td>
+            <td>
+              {% for aliase in doc.aliases %}
+                <span>{{aliase.name}}</span>
+              {% endfor %}
+            </td>
         </tr>
     {% endfor %}    
 </table>
@@ -36,21 +44,16 @@
 </html>
 
 <style>
-table{
-  border-collapse: collapse;
-  border-spacing: 0;
-  /* width: 100%; */
-}
-
 table tr{
   border-bottom: solid 1px #eee;
 }
 
 table th,table td{
-  text-align: center;
-  width: 20%;
-  padding: 10px 0;
+  padding: 10px 10px;
 }
-
-
+span{
+  margin: 2px;
+  padding: 5px;
+  background-color: antiquewhite;
+}
 </style>
