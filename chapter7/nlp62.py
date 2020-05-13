@@ -14,5 +14,5 @@ for key in r.scan_iter():
 print('アーティスト数:', len(artists))
 
 '''
-アーティスト数: 21946
+アーティスト数: 22821
 '''

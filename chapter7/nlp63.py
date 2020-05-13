@@ -25,24 +25,73 @@ def get_tags(name):
         print(tag['value'], tag['count'])
 
 
-get_tags('Sweety')
+get_tags('Queen')
 
 '''
-mandopop 1
-taiwanese 1
-duo 1
-chinese 1
-mandopop 1
-taiwanese 1
-duo 1
-chinese 1
-あいどる 1
-mandopop 1
-taiwanese 1
-duo 1
-chinese 1
-mandopop 1
-taiwanese 1
-duo 1
-chinese 1
+kamen rider w 1
+related-akb48 1
+hard rock 2
+70s 1
+queen family 1
+90s 1
+80s 1
+glam rock 1
+british 4
+english 1
+uk 2
+pop/rock 1
+pop-rock 1
+britannique 1
+classic pop and rock 1
+queen 1
+united kingdom 1
+langham 1 studio bbc 1
+kind of magic 1
+band 1
+rock 6
+platinum 1
+kamen rider w 1
+related-akb48 1
+hard rock 2
+70s 1
+queen family 1
+90s 1
+80s 1
+glam rock 1
+british 4
+english 1
+uk 2
+pop/rock 1
+pop-rock 1
+britannique 1
+classic pop and rock 1
+queen 1
+united kingdom 1
+langham 1 studio bbc 1
+kind of magic 1
+band 1
+rock 6
+platinum 1
+kamen rider w 1
+related-akb48 1
+hard rock 2
+70s 1
+queen family 1
+90s 1
+80s 1
+glam rock 1
+british 4
+english 1
+uk 2
+pop/rock 1
+pop-rock 1
+britannique 1
+classic pop and rock 1
+queen 1
+united kingdom 1
+langham 1 studio bbc 1
+kind of magic 1
+band 1
+rock 6
+platinum 1
 '''
