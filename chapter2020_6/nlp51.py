@@ -15,10 +15,9 @@ tqdm.pandas()
 
 
 def preprocessor(doc):
-    doc = re.sub(r"[',.]", '', doc)  # 記号を削除
-    tokens = doc.split(' ')
-    tokens = [token.lower() for token in tokens]  # 小文字に統一
-    return tokens
+    doc = re.sub(r"[',.]", '', doc)     # 記号を削除
+    doc = doc.lower()             # 小文字に統一
+    return doc
 
 
 def tokenize(doc):
@@ -31,16 +30,16 @@ def reduce_vocab(tokens):
     return tokens
 
 
-def tokenize(doc):
-    doc = re.sub(r"[',.]", '', doc)  # 記号を削除
-    tokens = doc.split(' ')
-    tokens = [token.lower() for token in tokens]  # 小文字に統一
-    return tokens
+# def tokenize(doc):
+#     doc = re.sub(r"[',.]", '', doc)  # 記号を削除
+#     tokens = doc.split(' ')
+#     tokens = [token.lower() for token in tokens]  # 小文字に統一
+#     return tokens
 
 
-def preprocessor(tokens):
-    tokens = [token for token in tokens if token in vocab]
-    return tokens
+# def preprocessor(tokens):
+#     tokens = [token for token in tokens if token in vocab]
+#     return tokens
 
 
 def bag_of_words(doc):
@@ -60,9 +59,18 @@ valid = pd.read_csv('../data/NewsAggregatorDataset/valid.txt',
 test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
+# preprocess
+train['tokens'] = train.title.progress_apply(preprocessor)
+test['tokens'] = test.title.progress_apply(preprocessor)
+valid['tokens'] = valid.title.progress_apply(preprocessor)
 
-# vocabulary
-train['tokens'] = train.title.apply(tokenize)
+# tokenize
+train['tokens'] = train.tokens.apply(tokenize)
+test['tokens'] = test.tokens.apply(tokenize)
+valid['tokens'] = valid.tokens.apply(tokenize)
+
+# reduce vocabulary
+
 vocab = train['tokens'].tolist()
 vocab = sum(vocab, [])  # flat list
 counter = Counter(vocab)
@@ -72,17 +80,13 @@ vocab = [
     if 2 < freq < 300
 ]
 
-train['tokens'] = train.tokens.progress_apply(preprocessor)
+train['tokens'] = train.tokens.apply(reduce_vocab)
+test['tokens'] = test.tokens.apply(reduce_vocab)
+valid['tokens'] = valid.tokens.apply(reduce_vocab)
+
 x_train = train.tokens.progress_apply(bag_of_words)
-
-test['tokens'] = test.title.apply(tokenize)
-test['tokens'] = test.tokens.progress_apply(preprocessor)
 x_test = test.tokens.progress_apply(bag_of_words)
-
-valid['tokens'] = valid.title.apply(tokenize)
-valid['tokens'] = valid.tokens.progress_apply(preprocessor)
 x_valid = valid.tokens.progress_apply(bag_of_words)
-
 
 x_train.to_csv('../data/NewsAggregatorDataset/train.feature.txt',
                sep='\t', header=False, index=False)
