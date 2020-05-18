@@ -9,8 +9,8 @@ collection = db['nlp100_collection']
 
 # TODO Collection.count_documents を調べる
 # warning が出ているのは時間がかかるから．
-documents = collection.find(filter={'area': 'Japan'})
-print(documents.count())
+count = collection.count_documents({'area': 'Japan'})
+print(count)
 
 '''
 22821

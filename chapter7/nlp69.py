@@ -14,7 +14,8 @@ collection = db['nlp100_collection']
 
 query = {}
 
-
+# TODO key, value in request.form.items()
+# で，keyを持ってこれるらしいので，formを一つにしたい
 @app.route('/')
 def home(query=query):
     documents = collection.find(

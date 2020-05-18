@@ -6,9 +6,14 @@ import gzip
 import json
 import redis
 
+# TODO 名前が被っている場合上書きされないようにする（idをkeyにする, valueを辞書型にするなど）
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 with gzip.open('../data/artist.json.gz', 'rt') as f:
     for line in f:
         data = json.loads(line)
-        r.set(data['name'], data.get('area', ''))
+        values = r.get(data['name'])
+        if values is None or isinstance(values, dict):
+            values = {}
+        values[data.get('id')] = data.get('area', '')
+        r.set(data['name'], values)

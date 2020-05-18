@@ -5,6 +5,7 @@ MongoDBのインタラクティブシェルを用いて，"Queen"というアー
 
 from pymongo import MongoClient
 
+# TODO filter= をつけなくてもよい
 client = MongoClient('localhost', 27017)
 db = client['nlp100_database']
 collection = db['nlp100_collection']

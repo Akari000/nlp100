@@ -12,17 +12,17 @@ documents = collection.find(
     filter={'tags.value': 'dance'}).sort([("rating.count", -1)]).limit(10)
 
 for document in documents:
-    print('%s\t投票数t:%s' % (document['name'], document['rating']['count']))
+    print('%s\t投票数:%s' % (document['name'], document['rating']['count']))
 
 '''
-Madonna 投票数t:26
-Björk   投票数t:23
-The Prodigy     投票数t:23
-Rihanna 投票数t:15
-Britney Spears  投票数t:13
-Maroon 5        投票数t:11
-Adam Lambert    投票数t:7
-Fatboy Slim     投票数t:7
-Basement Jaxx   投票数t:6
-Cornershop      投票数t:5
+Madonna 投票数:26
+Björk   投票数:23
+The Prodigy     投票数:23
+Rihanna 投票数:15
+Britney Spears  投票数:13
+Maroon 5        投票数:11
+Adam Lambert    投票数:7
+Fatboy Slim     投票数:7
+Basement Jaxx   投票数:6
+Cornershop      投票数:5
 '''
