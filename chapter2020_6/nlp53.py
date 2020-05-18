@@ -22,8 +22,6 @@ x_train = pd.read_csv('../data/NewsAggregatorDataset/train.feature.txt',
 lr = LogisticRegression(class_weight='balanced')  # ロジスティック回帰モデルのインスタンスを作成
 lr.fit(x_train, y_train)  # ロジスティック回帰モデルの重みを学習
 
-# TODO 予測確率を出す
-
 
 # 予測
 def predict(x_):
