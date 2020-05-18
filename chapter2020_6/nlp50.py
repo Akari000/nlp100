@@ -9,6 +9,8 @@ News Aggregator Data Setをダウンロードし、以下の要領で学習デ�
 ファイルには，１行に１事例を書き出すこととし，カテゴリ名と記事見出しのタブ区切り形式とせよ
 （このファイルは後に問題70で再利用する）．
 '''
+# TODO 要素数をカウントする．
+# TODO カテゴリ名と記事見出しのタブ区切りで保存する
 
 import pandas as pd
 import numpy as np
@@ -26,6 +28,7 @@ publisher = ('Reuters', 'Huffington Post',
 posts = pd.read_csv('../data/NewsAggregatorDataset/newsCorpora.csv',
                     names=columns, sep='\t')
 posts = posts[posts.publisher.isin(publisher)]
+posts = posts[['category', 'title']]
 posts = posts.sample(frac=1)  # ランダムサンプリング
 size = len(posts)
 train, valid, test = np.split(posts, [int(.8*size), int(.9*size)])  # 8:1:1に分割

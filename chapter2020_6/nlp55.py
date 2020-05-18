@@ -7,14 +7,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 
-columns = ('id',
-           'title',
-           'url',
-           'publisher',
-           'category',
-           'story',
-           'hostname',
-           'timestamp')
+columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')

@@ -31,14 +31,7 @@ def bag_of_words(doc):
     return pd.Series(vector)
 
 
-columns = ('id',
-           'title',
-           'url',
-           'publisher',
-           'category',
-           'story',
-           'hostname',
-           'timestamp')
+columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')

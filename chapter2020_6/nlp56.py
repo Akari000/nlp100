@@ -10,14 +10,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 import numpy as np
 
-columns = ('id',
-           'title',
-           'url',
-           'publisher',
-           'category',
-           'story',
-           'hostname',
-           'timestamp')
+columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
