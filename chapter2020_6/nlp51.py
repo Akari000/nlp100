@@ -5,6 +5,31 @@
 '''
 
 import pandas as pd
+import re
+from collections import Counter
+from tqdm import tqdm
+tqdm.pandas()
+
+
+def tokenize(doc):
+    doc = re.sub(r"[',.]", '', doc)  # 記号を削除
+    tokens = doc.split(' ')
+    tokens = [token.lower() for token in tokens]  # 小文字に統一
+    return tokens
+
+
+def preprocessor(tokens):
+    tokens = [token for token in tokens if token in vocab]
+    return tokens
+
+
+def bag_of_words(doc):
+    vector = [0]*len(vocab)
+    for word in doc:
+        if word in vocab:
+            vector[vocab.index(word)] += 1
+    return pd.Series(vector)
+
 
 columns = ('id',
            'title',
@@ -22,13 +47,33 @@ valid = pd.read_csv('../data/NewsAggregatorDataset/valid.txt',
 test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
-train = train[['id', 'title', 'category', 'story']]
-valid = valid[['id', 'title', 'category', 'story']]
-test = test[['id', 'title', 'category', 'story']]
 
-train.to_csv('../data/NewsAggregatorDataset/train.feature.txt',
-             sep='\t', header=False, index=False)
-valid.to_csv('../data/NewsAggregatorDataset/valid.feature.txt',
-             sep='\t', header=False, index=False)
-test.to_csv('../data/NewsAggregatorDataset/test.feature.txt',
-            sep='\t', header=False, index=False)
+# vocabulary
+train['tokens'] = train.title.apply(tokenize)
+vocab = train['tokens'].tolist()
+vocab = sum(vocab, [])  # flat list
+counter = Counter(vocab)
+vocab = [
+    token
+    for token, freq in counter.most_common()
+    if 2 < freq < 300
+]
+
+train['tokens'] = train.tokens.progress_apply(preprocessor)
+x_train = train.tokens.progress_apply(bag_of_words)
+
+test['tokens'] = test.title.apply(tokenize)
+test['tokens'] = test.tokens.progress_apply(preprocessor)
+x_test = test.tokens.progress_apply(bag_of_words)
+
+valid['tokens'] = valid.title.apply(tokenize)
+valid['tokens'] = valid.tokens.progress_apply(preprocessor)
+x_valid = valid.tokens.progress_apply(bag_of_words)
+
+
+x_train.to_csv('../data/NewsAggregatorDataset/train.feature.txt',
+               sep='\t', header=False, index=False)
+x_valid.to_csv('../data/NewsAggregatorDataset/valid.feature.txt',
+               sep='\t', header=False, index=False)
+x_test.to_csv('../data/NewsAggregatorDataset/test.feature.txt',
+              sep='\t', header=False, index=False)
