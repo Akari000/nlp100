@@ -10,6 +10,26 @@ from collections import Counter
 from tqdm import tqdm
 tqdm.pandas()
 
+# TODO tokenize をpreprocessorにわける
+# TODO preprocessorをreduce_vocabに変える
+
+
+def preprocessor(doc):
+    doc = re.sub(r"[',.]", '', doc)  # 記号を削除
+    tokens = doc.split(' ')
+    tokens = [token.lower() for token in tokens]  # 小文字に統一
+    return tokens
+
+
+def tokenize(doc):
+    tokens = doc.split(' ')
+    return tokens
+
+
+def reduce_vocab(tokens):
+    tokens = [token for token in tokens if token in vocab]
+    return tokens
+
 
 def tokenize(doc):
     doc = re.sub(r"[',.]", '', doc)  # 記号を削除

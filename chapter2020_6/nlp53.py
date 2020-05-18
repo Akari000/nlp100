@@ -28,18 +28,22 @@ lr.fit(x_train, y_train)  # ロジスティック回帰モデルの重みを学�
 
 
 # 予測
-def predict_category(x_):
-    y_pred = lr.predict(x_test)
-    return y_pred
+def predict(x_):
+    y_pred = lr.predict(x_)
+    score = lr.predict_proba(x_)
+    return (y_pred, score)
 
 
-y_pred = predict_category(x_test.head(1))
+y_pred = predict(x_test.head(1))
+
 print('タイトル', test.title.head(1).values)
 print('予測ラベル', y_pred[0])
 print('正解', y_test[0])
+print('予測確率', y_pred[1])
 
 '''
-タイトル ['American Spurs Airline Shares Higher on Raised Margins']
-予測ラベル 0
+タイトル ['UK Stocks Rise to Two-Month High as Barclays Gains on Job Cuts']
+予測ラベル [1]
 正解 0
+予測確率 [[0.23157012 0.36831571 0.36275884 0.03735533]]
 '''
