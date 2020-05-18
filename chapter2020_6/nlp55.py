@@ -29,11 +29,6 @@ lr.fit(x_train, y_train)  # ロジスティック回帰モデルの重みを学�
 
 
 # 予測
-def predict_category(x_):
-    y_pred = lr.predict(x_test)
-    return y_pred
-
-
 def accuracy(predict, y):
     return (predict == y).mean()
 

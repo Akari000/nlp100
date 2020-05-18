@@ -8,7 +8,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
-import numpy as np
 
 columns = ('category', 'title')
 
@@ -29,18 +28,6 @@ x_test = pd.read_csv('../data/NewsAggregatorDataset/test.feature.txt',
 # 学習
 lr = LogisticRegression(class_weight='balanced')
 lr.fit(x_train, y_train)  # ロジスティック回帰モデルの重みを学習
-
-
-def accuracy(predict, y):
-    return (predict == y).mean()
-
-
-def confusion_matrix(y_true, y_pred):
-    size = len(set(y_true))
-    result = np.array([0]*(size*size)).reshape((size, size))  # 配列の初期化
-    for t, p in zip(y_true, y_pred):
-        result[t][p] += 1
-    return result
 
 
 #  評価データの混同行列
