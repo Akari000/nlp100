@@ -13,7 +13,7 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
-y_train = train['category'].map(label2int)  # クラスを定義
+y_train = train['category'].map(label2int)
 y_test = test['category'].map(label2int)
 
 x_train = pd.read_csv('../data/NewsAggregatorDataset/train.feature.txt',
@@ -22,16 +22,11 @@ x_test = pd.read_csv('../data/NewsAggregatorDataset/test.feature.txt',
                      sep='\t', header=None)
 
 # 学習
-lr = LogisticRegression(class_weight='balanced')  # ロジスティック回帰モデルのインスタンスを作成
-lr.fit(x_train, y_train)  # ロジスティック回帰モデルの重みを学習
+lr = LogisticRegression(class_weight='balanced')
+lr.fit(x_train, y_train)
 
 
 # 予測
-def predict_category(x_):
-    y_pred = lr.predict(x_test)
-    return y_pred
-
-
 def accuracy(predict, y):
     return (predict == y).mean()
 
@@ -41,7 +36,6 @@ y_pred = lr.predict(x_train)
 print('正解率', accuracy(y_pred, y_train))
 '''
 正解率 0.9845389805097451
-
 '''
 
 #  評価データの正解率
