@@ -38,7 +38,7 @@ print('presotion', precision_score(y_test, y_pred, average=None, labels=labels))
 print('recall', recall_score(y_test, y_pred, average=None, labels=labels))
 print('f1_score', f1_score(y_test, y_pred, average=None, labels=labels))
 
-print('マイクロ平均')
+print('マイクロ平均')  # 全て一致する．
 print('presition', precision_score(y_test, y_pred, average='micro', labels=labels))
 print('recall', recall_score(y_test, y_pred, average='micro', labels=labels))
 print('f1_score', f1_score(y_test, y_pred, average='micro', labels=labels))

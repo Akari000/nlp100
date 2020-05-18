@@ -30,7 +30,7 @@ y_test = test['category'].map({'b': 0, 't': 1, 'e': 2, 'm': 3})
 def accuracy(predict, y):
     return (predict == y).mean()
 
-
+# TODO 学習データ，検証データでもプロットする
 x = []
 y = []
 params = np.logspace(-2, 3, 10, base=10)
@@ -48,4 +48,4 @@ plt.plot(x, y)
 plt.xlabel('正規化パラメータ')
 plt.ylabel('正解率')
 plt.title('正則化パラメータと正解率')
-plt.savefig('../results/nlp2020_58.png')
+plt.savefig('../results/nlp2020_58test.png')

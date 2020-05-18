@@ -30,18 +30,6 @@ def reduce_vocab(tokens):
     return tokens
 
 
-# def tokenize(doc):
-#     doc = re.sub(r"[',.]", '', doc)  # 記号を削除
-#     tokens = doc.split(' ')
-#     tokens = [token.lower() for token in tokens]  # 小文字に統一
-#     return tokens
-
-
-# def preprocessor(tokens):
-#     tokens = [token for token in tokens if token in vocab]
-#     return tokens
-
-
 def bag_of_words(doc):
     vector = [0]*len(vocab)
     for word in doc:
@@ -70,7 +58,6 @@ test['tokens'] = test.tokens.apply(tokenize)
 valid['tokens'] = valid.tokens.apply(tokenize)
 
 # reduce vocabulary
-
 vocab = train['tokens'].tolist()
 vocab = sum(vocab, [])  # flat list
 counter = Counter(vocab)
