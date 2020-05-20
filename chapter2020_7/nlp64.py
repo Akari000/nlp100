@@ -10,6 +10,8 @@ import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 
+# TODO :から始まる行をtypeとして各レコードに追加する．
+
 googlenews = KeyedVectors.load_word2vec_format(
     '../data/GoogleNews-vectors-negative300.bin', binary=True)
 

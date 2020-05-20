@@ -29,6 +29,8 @@ def spearman(x, y):
 word_sim = pd.read_csv('../data/wordsim353/combined.csv')
 word_sim['Vector'] = word_sim.apply(get_similarity, axis=1)
 
+# TODO リストの0番目にはindex0のランクが来るようにする．
+
 human_rank = word_sim.sort_values('Human (mean)').index
 vector_rank = word_sim.sort_values('Vector').index
 spearman_coefficient = spearman(list(human_rank), list(vector_rank))
