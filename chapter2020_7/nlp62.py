@@ -1,3 +1,6 @@
+'''## 62. 類似度の高い単語10件
+“United States”とコサイン類似度が高い10語と，その類似度を出力せよ．
+'''
 from gensim.models import KeyedVectors
 
 googlenews = KeyedVectors.load_word2vec_format(

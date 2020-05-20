@@ -1,3 +1,6 @@
+'''61. 単語の類似度
+“United States”と”U.S.”のコサイン類似度を計算せよ
+'''
 from gensim.models import KeyedVectors
 import numpy as np
 
