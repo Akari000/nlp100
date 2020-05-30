@@ -39,6 +39,36 @@ def tokens2ids(tokens):
     return torch.tensor(tokens, dtype=torch.long)
 
 
+def trainer(model, criterion, optimizer, loader, ds_size, device, max_iter=10):
+    for epoch in range(10):
+        n_correct = 0
+        total_loss = 0
+        for i, (inputs, labels, lengs) in enumerate(tqdm(loader)):
+            inputs = inputs[:, :max(lengs)]
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            lengs = lengs.to(device)
+
+            # with detect_anomaly():
+            outputs = model(inputs, lengs)
+            loss = criterion(outputs, labels)
+            model.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.data
+            outputs = np.argmax(outputs.data.numpy(), axis=1)
+            labels = labels.data.numpy()
+            for output, label in zip(outputs, labels):
+                if output == label:
+                    n_correct += 1
+
+        print('epoch: %d loss: %f accuracy: %f' % (
+                epoch, loss, n_correct/ds_size))
+
+    print('Finished Training')
+
+
 class RNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(RNN, self).__init__()
@@ -86,7 +116,8 @@ label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
 Y_test = test.category.map(label2int)
 
-
+# ds_size はtrain.lenで取ってくる
+# TODO train をtrain()関数にまとめる
 # TODO 評価データでも正解率を求める．
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -99,43 +130,17 @@ loader = DataLoader(trainset, batch_size=batch_size)
 
 model = model.to(device)
 ds_size = len(trainset)
-nan_inputs = 0
-for epoch in range(10):
-    n_correct = 0
-    total_loss = 0
-    for i, (inputs, labels, lengs) in enumerate(tqdm(loader)):
-        inputs = inputs[:, :max(lengs)]
-        inputs = inputs.to(device)
-        labels = labels.to(device)
-        lengs = lengs.to(device)
+trainer(model, criterion, optimizer, loader, ds_size, device, max_iter=10)
 
-        # with detect_anomaly():
-        outputs = model(inputs, lengs)
-        loss = criterion(outputs, labels)
-        model.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        total_loss += loss.data
-        outputs = np.argmax(outputs.data.numpy(), axis=1)
-        labels = labels.data.numpy()
-        print(len(labels), len(outputs))
-        for output, label in zip(outputs, labels):
-            if output == label:
-                n_correct += 1
-
-        print('correct', n_correct)
-    print('ds', ds_size)
-    print('epoch: %d loss: %f accuracy: %f' % (
-      epoch, loss, n_correct/ds_size))
-
-
-print('Finished Training')
 '''
-epoch: 0 loss: 1.366026 accuracy: 0.611694
-epoch: 1 loss: 2.227322 accuracy: 0.717860
-epoch: 2 loss: 2.329761 accuracy: 0.755903
-epoch: 3 loss: 1.523480 accuracy: 0.781016
-epoch: 4 loss: 2.170162 accuracy: 0.791042
-epoch: 5 loss: 0.075167 accuracy: 0.799475
+epoch: 0 loss: 0.857956 accuracy: 0.536357
+epoch: 1 loss: 0.745606 accuracy: 0.706803
+epoch: 2 loss: 0.751127 accuracy: 0.765648
+epoch: 3 loss: 0.745533 accuracy: 0.788231
+epoch: 4 loss: 0.744483 accuracy: 0.798070
+epoch: 5 loss: 0.743922 accuracy: 0.803130
+epoch: 6 loss: 0.744310 accuracy: 0.805847
+epoch: 7 loss: 0.744274 accuracy: 0.807627
+epoch: 8 loss: 0.744521 accuracy: 0.808283
+epoch: 9 loss: 0.745145 accuracy: 0.808939
 '''
