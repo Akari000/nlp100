@@ -17,6 +17,7 @@ with open('token2id_dic.json', 'r') as f:
 dw = 300
 dh = 50
 L = 4
+batch_size = 1
 columns = ('category', 'title')
 vocab_size = len(token2id_dic)
 
@@ -42,21 +43,19 @@ class RNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(RNN, self).__init__()
         self.hidden_size = hidden_size
-        self.emb = torch.nn.Embedding(vocab_size, data_size, padding_idx=0)
-        self.rnn = torch.nn.RNN(dw, dh, batch_first=True)
+        self.emb = nn.Embedding(vocab_size, data_size, padding_idx=0)
+        self.rnn = nn.LSTM(dw, dh, batch_first=True)
         self.liner = nn.Linear(hidden_size, output_size)
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, x, lengs, hidden=None):   # x: (max_len)
+    def forward(self, x, lengs, hidden=None, cell=None):   # x: (max_len)
         x = self.emb(x)                         # x: (max_length, dw)
         packed = pack_padded_sequence(
             x, lengs, batch_first=True, enforce_sorted=False)
-        y, hidden = self.rnn(packed, hidden)    # y: (max_len, dh), hidden: (max_len, dh)
-        y, lengs = pad_packed_sequence(y, batch_first=True)
-        y = y[:, -1, :]
-        y = self.liner(y)
+        y, (hidden, cell) = self.rnn(packed)    # y: (max_len, dh), hidden: (max_len, dh)
+        y = self.liner(hidden.view(hidden.shape[1], -1))
         y = self.softmax(y)
-        return y, hidden
+        return y
 
 
 class Mydatasets(torch.utils.data.Dataset):
@@ -96,12 +95,11 @@ criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
 optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
 
 trainset = Mydatasets(X_train, Y_train)
-loader = DataLoader(trainset, batch_size=4)
+loader = DataLoader(trainset, batch_size=batch_size)
 
 model = model.to(device)
-ds_size = len(loader)
+ds_size = len(trainset)
 nan_inputs = 0
-hidden = None
 for epoch in range(10):
     n_correct = 0
     total_loss = 0
@@ -111,21 +109,23 @@ for epoch in range(10):
         labels = labels.to(device)
         lengs = lengs.to(device)
 
-        with detect_anomaly():
-            outputs, hidden = model(inputs, lengs, hidden)
-            loss = criterion(outputs, labels)
-            model.zero_grad()
-            loss.backward()
-            optimizer.step()    # パラメータを更新
+        # with detect_anomaly():
+        outputs = model(inputs, lengs)
+        loss = criterion(outputs, labels)
+        model.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-            total_loss += loss.data
-            outputs = np.argmax(outputs.data.numpy(), axis=1)
-            labels = labels.data.numpy()
-            hidden = hidden.detach()
-            for output, label in zip(outputs, labels):
-                if output == label:
-                    n_correct += 1
+        total_loss += loss.data
+        outputs = np.argmax(outputs.data.numpy(), axis=1)
+        labels = labels.data.numpy()
+        print(len(labels), len(outputs))
+        for output, label in zip(outputs, labels):
+            if output == label:
+                n_correct += 1
 
+        print('correct', n_correct)
+    print('ds', ds_size)
     print('epoch: %d loss: %f accuracy: %f' % (
       epoch, loss, n_correct/ds_size))
 
