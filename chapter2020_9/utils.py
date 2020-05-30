@@ -20,3 +20,15 @@ def preprocessor(doc):
     doc = normalize(doc)
     tokens = tokenize(doc)
     return tokens
+
+
+def token2id(token, token2id_dic):
+    if token in token2id_dic:
+        return token2id_dic[token]
+    else:
+        return 0
+
+
+def tokens2ids(tokens, token2id_dic):
+    tokens = [token2id(token, token2id_dic) for token in tokens]
+    return torch.tensor(tokens, dtype=torch.long)

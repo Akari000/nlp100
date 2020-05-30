@@ -5,15 +5,15 @@ import torch
 import json
 
 
-def token2id(token):
+def token2id(token, token2id_dic):
     if token in token2id_dic:
         return token2id_dic[token]
     else:
         return 0
 
 
-def tokens2ids(tokens):
-    tokens = [token2id(token) for token in tokens]
+def tokens2ids(tokens, token2id_dic):
+    tokens = [token2id(token, token2id_dic) for token in tokens]
     return torch.tensor(tokens, dtype=torch.long)
 
 
@@ -41,7 +41,7 @@ with open('token2id_dic.json', 'w') as f:
 
 
 text = 'I am a cat'
-ids = tokens2ids(tokenize(text))
+ids = tokens2ids(tokenize(text), token2id_dic=token2id_dic)
 print(ids)
 
 '''

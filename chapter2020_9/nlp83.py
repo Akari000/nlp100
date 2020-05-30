@@ -150,34 +150,34 @@ trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
 
 '''
 epoch:  0
-[train]	loss: 0.845764 accuracy: 0.544228
-[test]	loss: 1.102350 accuracy: 0.668666
+[train]	loss: 1.381180 accuracy: 0.286451
+[test]	loss: 1.385540 accuracy: 0.294603
 epoch:  1
-[train]	loss: 0.746207 accuracy: 0.715705
-[test]	loss: 0.988419 accuracy: 0.763118
+[train]	loss: 1.380485 accuracy: 0.293010
+[test]	loss: 1.384784 accuracy: 0.299850
 epoch:  2
-[train]	loss: 0.744244 accuracy: 0.768085
-[test]	loss: 0.983985 accuracy: 0.762369
+[train]	loss: 1.379793 accuracy: 0.300319
+[test]	loss: 1.384027 accuracy: 0.307346
 epoch:  3
-[train]	loss: 0.744022 accuracy: 0.787294
-[test]	loss: 0.976032 accuracy: 0.765367
+[train]	loss: 1.379105 accuracy: 0.307534
+[test]	loss: 1.383276 accuracy: 0.313343
 epoch:  4
-[train]	loss: 0.743966 accuracy: 0.799100
-[test]	loss: 0.966806 accuracy: 0.773613
+[train]	loss: 1.378418 accuracy: 0.315592
+[test]	loss: 1.382528 accuracy: 0.317841
 epoch:  5
-[train]	loss: 0.744006 accuracy: 0.802286
-[test]	loss: 0.966757 accuracy: 0.772864
+[train]	loss: 1.377735 accuracy: 0.322058
+[test]	loss: 1.381781 accuracy: 0.326087
 epoch:  6
-[train]	loss: 0.743976 accuracy: 0.805660
-[test]	loss: 0.965994 accuracy: 0.770615
+[train]	loss: 1.377054 accuracy: 0.328898
+[test]	loss: 1.381039 accuracy: 0.329085
 epoch:  7
-[train]	loss: 0.744010 accuracy: 0.807346
-[test]	loss: 0.962968 accuracy: 0.778861
+[train]	loss: 1.376375 accuracy: 0.336207
+[test]	loss: 1.380298 accuracy: 0.337331
 epoch:  8
-[train]	loss: 0.744325 accuracy: 0.806972
-[test]	loss: 0.963270 accuracy: 0.779610
+[train]	loss: 1.375700 accuracy: 0.340611
+[test]	loss: 1.379560 accuracy: 0.339580
 epoch:  9
-[train]	loss: 0.743826 accuracy: 0.809970
-[test]	loss: 0.962994 accuracy: 0.778111
+[train]	loss: 1.375027 accuracy: 0.345577
+[test]	loss: 1.378823 accuracy: 0.341079
 Finished Training
 '''

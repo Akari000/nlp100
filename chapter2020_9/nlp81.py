@@ -1,6 +1,6 @@
 import pandas as pd
 import torch
-from utils import preprocessor
+from utils import preprocessor, tokens2ids
 from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_sequence
 import torch.nn as nn
 import json
@@ -16,18 +16,6 @@ vocab_size = len(token2id_dic)
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
-
-
-def token2id(token):
-    if token in token2id_dic:
-        return token2id_dic[token]
-    else:
-        return 0
-
-
-def tokens2ids(tokens):
-    tokens = [token2id(token) for token in tokens]
-    return torch.tensor(tokens, dtype=torch.long)
 
 
 class RNN(nn.Module):
@@ -51,7 +39,7 @@ class RNN(nn.Module):
 
 
 train['tokens'] = train.title.apply(preprocessor)
-X_train = train.tokens.apply(tokens2ids)
+X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
 # X_train[0] = tensor([   8,    0, 2416, 1604, 2143,    5, 1605,    4,  745])
 
 lengs = torch.tensor([len(x) for x in X_train])
