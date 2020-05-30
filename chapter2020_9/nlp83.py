@@ -5,7 +5,6 @@ import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
-from torch.autograd import detect_anomaly
 import numpy as np
 import json
 from tqdm import tqdm
@@ -64,7 +63,6 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
             labels = labels.to(device)
             lengs = lengs.to(device)
 
-            # with detect_anomaly():
             outputs = model(inputs, lengs)
             loss = criterion(outputs, labels)
             model.zero_grad()

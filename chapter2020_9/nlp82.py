@@ -1,13 +1,12 @@
 import pandas as pd
-import torch
 from utils import preprocessor
-from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_sequence
+import torch
+import torch.optim as optim
 import torch.nn as nn
+from torch.utils.data import DataLoader
+from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
 import numpy as np
 import json
-from torch.utils.data import DataLoader
-import torch.optim as optim
-from torch.autograd import detect_anomaly
 from tqdm import tqdm
 tqdm.pandas()
 
