@@ -14,6 +14,7 @@ tqdm.pandas()
 
 with open('token2id_dic.json', 'r') as f:
     token2id_dic = json.loads(f.read())
+
 dw = 300
 dh = 50
 L = 4
@@ -39,7 +40,21 @@ def tokens2ids(tokens):
     return torch.tensor(tokens, dtype=torch.long)
 
 
-def trainer(model, criterion, optimizer, loader, ds_size, device, max_iter=10):
+def accuracy(pred, label):
+    pred = np.argmax(pred.data.numpy(), axis=1)  # 行ごとに最大値のインデックスを取得する．
+    label = label.data.numpy()
+    return (pred == label).mean()
+
+
+def evaluate(model, loader):
+    for inputs, labels, lengs in loader:
+        outputs = model(inputs, lengs)
+        loss = criterion(outputs, labels)
+        acc = accuracy(outputs, labels)
+    return loss.data, acc
+
+
+def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, max_iter=10):
     for epoch in range(10):
         n_correct = 0
         total_loss = 0
@@ -63,8 +78,11 @@ def trainer(model, criterion, optimizer, loader, ds_size, device, max_iter=10):
                 if output == label:
                     n_correct += 1
 
-        print('epoch: %d loss: %f accuracy: %f' % (
-                epoch, loss, n_correct/ds_size))
+        print('epoch: ', epoch)
+        print('[train]\tloss: %f accuracy: %f' % (loss, n_correct/ds_size))
+
+        test_loss, test_acc = evaluate(model, test_loader)
+        print('[test]\tloss: %f accuracy: %f' % (test_loss, test_acc))
 
     print('Finished Training')
 
@@ -116,9 +134,6 @@ label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
 Y_test = test.category.map(label2int)
 
-# ds_size はtrain.lenで取ってくる
-# TODO train をtrain()関数にまとめる
-# TODO 評価データでも正解率を求める．
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = RNN(dw, dh, L, vocab_size)
@@ -126,21 +141,45 @@ criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
 optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
 
 trainset = Mydatasets(X_train, Y_train)
+testset = Mydatasets(X_test, Y_test)
 loader = DataLoader(trainset, batch_size=batch_size)
+test_loader = DataLoader(testset, batch_size=testset.__len__())
 
 model = model.to(device)
-ds_size = len(trainset)
-trainer(model, criterion, optimizer, loader, ds_size, device, max_iter=10)
+ds_size = trainset.__len__()
+
+trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
 
 '''
-epoch: 0 loss: 0.857956 accuracy: 0.536357
-epoch: 1 loss: 0.745606 accuracy: 0.706803
-epoch: 2 loss: 0.751127 accuracy: 0.765648
-epoch: 3 loss: 0.745533 accuracy: 0.788231
-epoch: 4 loss: 0.744483 accuracy: 0.798070
-epoch: 5 loss: 0.743922 accuracy: 0.803130
-epoch: 6 loss: 0.744310 accuracy: 0.805847
-epoch: 7 loss: 0.744274 accuracy: 0.807627
-epoch: 8 loss: 0.744521 accuracy: 0.808283
-epoch: 9 loss: 0.745145 accuracy: 0.808939
+epoch:  0
+[train]	loss: 0.845764 accuracy: 0.544228
+[test]	loss: 1.102350 accuracy: 0.668666
+epoch:  1
+[train]	loss: 0.746207 accuracy: 0.715705
+[test]	loss: 0.988419 accuracy: 0.763118
+epoch:  2
+[train]	loss: 0.744244 accuracy: 0.768085
+[test]	loss: 0.983985 accuracy: 0.762369
+epoch:  3
+[train]	loss: 0.744022 accuracy: 0.787294
+[test]	loss: 0.976032 accuracy: 0.765367
+epoch:  4
+[train]	loss: 0.743966 accuracy: 0.799100
+[test]	loss: 0.966806 accuracy: 0.773613
+epoch:  5
+[train]	loss: 0.744006 accuracy: 0.802286
+[test]	loss: 0.966757 accuracy: 0.772864
+epoch:  6
+[train]	loss: 0.743976 accuracy: 0.805660
+[test]	loss: 0.965994 accuracy: 0.770615
+epoch:  7
+[train]	loss: 0.744010 accuracy: 0.807346
+[test]	loss: 0.962968 accuracy: 0.778861
+epoch:  8
+[train]	loss: 0.744325 accuracy: 0.806972
+[test]	loss: 0.963270 accuracy: 0.779610
+epoch:  9
+[train]	loss: 0.743826 accuracy: 0.809970
+[test]	loss: 0.962994 accuracy: 0.778111
+Finished Training
 '''
