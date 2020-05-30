@@ -17,7 +17,7 @@ with open('token2id_dic.json', 'r') as f:
 dw = 300
 dh = 50
 L = 4
-batch_size = 1
+batch_size = 1024
 columns = ('category', 'title')
 vocab_size = len(token2id_dic)
 

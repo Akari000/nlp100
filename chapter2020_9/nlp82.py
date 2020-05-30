@@ -53,15 +53,12 @@ def evaluate(model, loader):
     return loss.data, acc
 
 
-def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, max_iter=10):
+def trainer(model, criterion, optimizer, loader, test_loader, ds_size, max_iter=10):
     for epoch in range(10):
         n_correct = 0
         total_loss = 0
         for i, (inputs, labels, lengs) in enumerate(tqdm(loader)):
             inputs = inputs[:, :max(lengs)]
-            inputs = inputs.to(device)
-            labels = labels.to(device)
-            lengs = lengs.to(device)
 
             # with detect_anomaly():
             outputs = model(inputs, lengs)
@@ -134,7 +131,6 @@ Y_train = train.category.map(label2int)
 Y_test = test.category.map(label2int)
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = RNN(dw, dh, L, vocab_size)
 criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
 optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
@@ -144,10 +140,9 @@ testset = Mydatasets(X_test, Y_test)
 loader = DataLoader(trainset, batch_size=batch_size)
 test_loader = DataLoader(testset, batch_size=testset.__len__())
 
-model = model.to(device)
 ds_size = trainset.__len__()
 
-trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
+trainer(model, criterion, optimizer, loader, test_loader, ds_size, 10)
 
 '''
 epoch:  0
