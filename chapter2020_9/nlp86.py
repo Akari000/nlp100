@@ -62,7 +62,7 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 
     print('Finished Training')
 
-
+# TODO 意味が違ってくるので，conv2dを使う．note参照．
 class CNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(CNN, self).__init__()

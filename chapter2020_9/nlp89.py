@@ -86,7 +86,7 @@ def preprocessor(doc):
     tokens = tokenizer.tokenize(doc)
     tokens = tokenizer.convert_tokens_to_ids(tokens)
     tokens = torch.tensor(tokens)
-    return tokens
+    return tokens 
 
 
 def accuracy(pred, label):

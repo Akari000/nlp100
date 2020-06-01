@@ -121,7 +121,7 @@ def objective(trial):
     model = model.to(device)
     ds_size = trainset.__len__()
 
-    model = trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
+    model = trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 50)
     test_loss, test_acc = evaluate(model, test_loader, criterion=criterion)
 
     return 1.0 - test_acc
