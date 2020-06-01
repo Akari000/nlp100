@@ -5,22 +5,19 @@ from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import re
 import pandas as pd
-from utils import tokens2ids
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from torch.nn.utils.rnn import pad_sequence
 import numpy as np
-import json
-from collections import Counter
 from tqdm import tqdm
 tqdm.pandas()
 
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased', 
-                                                      num_labels=4,
-                                                      output_attentions = False,
-                                                      output_hidden_states = False,)
+model = BertForSequenceClassification.from_pretrained(
+    'bert-base-uncased',
+    num_labels=4,
+    output_attentions=False,
+    output_hidden_states=False,)
 
 
 def flat_accuracy(preds, labels):
@@ -33,17 +30,23 @@ def trainer(model, optimizer, loader, test_loader, ds_size, device, max_iter=10)
     for epoch in range(max_iter):
         n_correct = 0
         total_loss = 0
-        for i, (inputs, labels, mask) in enumerate(tqdm(loader)):
+        for i, (inputs, labels) in enumerate(tqdm(loader)):
             inputs = inputs.to(device)
             labels = labels.to(device)
-            mask = mask.to(device)
-            loss, logits = model(inputs, labels=labels, attention_mask=mask)
+            loss, logits = model(inputs, labels=labels)
             model.zero_grad()
             loss.backward()
             optimizer.step()
 
+            # count loss and n_correct
             total_loss += loss.data
-            n_correct += flat_accuracy(logits, labels)
+            logits = np.argmax(logits.data.numpy(), axis=1)
+            labels = labels.data.numpy()
+            for logit, label in zip(logits, labels):
+                if logit == label:
+                    n_correct += 1
+
+            print('loss: %f\t n_correct: %d' % (loss.data, n_correct))
 
         print('epoch: ', epoch)
         print('[train]\tloss: %f accuracy: %f' % (loss, n_correct/ds_size))
@@ -56,9 +59,10 @@ def trainer(model, optimizer, loader, test_loader, ds_size, device, max_iter=10)
 
 class Mydatasets(torch.utils.data.Dataset):
     def __init__(self, data, labels):
-        self.data = pad_sequence(data, batch_first=True)
-        max_len = len(self.data[0])
-        self.mask = torch.tensor([[1]*len(x)+[0]*(max_len-len(x)) for x in data])
+        self.data = data
+        # self.data = pad_sequence(data, batch_first=True)
+        # max_len = len(self.data[0])
+        # self.mask = torch.tensor([[1]*len(x)+[0]*(max_len-len(x)) for x in data])
         self.labels = torch.tensor(labels).long()
         self.datanum = len(data)
 
@@ -68,8 +72,9 @@ class Mydatasets(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         out_data = self.data[idx]
         out_label = self.labels[idx]
-        mask = self.mask[idx]
-        return out_data, out_label, mask
+        # mask = self.mask[idx]
+        # print(out_data)
+        return out_data, out_label
 
 
 def normalize(doc):
@@ -81,12 +86,16 @@ def normalize(doc):
     return doc
 
 
-def preprocessor(doc):
+def preprocessor(doc, max_len):
     doc = normalize(doc)
-    tokens = tokenizer.tokenize(doc)
-    tokens = tokenizer.convert_tokens_to_ids(tokens)
-    tokens = torch.tensor(tokens)
-    return tokens 
+    tokens = tokenizer.encode_plus(
+        doc,
+        add_special_tokens=True,
+        max_length=max_len,
+        pad_to_max_length=True,
+        return_tensors='pt')
+    tokens = tokens['input_ids']
+    return tokens.squeeze(0)
 
 
 def accuracy(pred, label):
@@ -106,7 +115,7 @@ def evaluate(model, loader, criterion):
 dw = 300
 dh = 50
 L = 4
-batch_size = 1024
+batch_size = 32
 columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
@@ -115,23 +124,21 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
 
-# make vacobrary dic
-docs = [normalize(doc) for doc in train.title.values.tolist()]
-tokens = [tokenizer.tokenize(doc) for doc in docs]
-tokens = sum(tokens, [])  # flat list
-counter = Counter(tokens)
+# get max seequence length
+# train['tokens'] = train.title.apply(normalize)
+# train['tokens'] = train.tokens.apply(tokenizer.tokenize)
 
-token2id_dic = {}
-vocab_size = len(counter)
-for index, (token, freq) in enumerate(counter.most_common(), 1):
-    if freq < 2:
-        token2id_dic[token] = 0
-    else:
-        token2id_dic[token] = index
+# train['len'] = train.tokens.apply(len)
+# max_len = train[train.len < 512].sort_values(
+#     'len', ascending=False).len.tolist()[0]
+max_len = 31
+train['tokens'] = train.title.apply(preprocessor, max_len=max_len)
+test['tokens'] = test.title.apply(preprocessor, max_len=max_len)
 
 
-X_train = train.title.apply(preprocessor)
-X_test = test.title.apply(preprocessor)
+X_train = train['tokens'].values.tolist()
+X_test = train['tokens'].values.tolist()
+
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
