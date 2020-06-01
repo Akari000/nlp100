@@ -5,12 +5,13 @@ from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import re
 import pandas as pd
-from utils import preprocessor, tokens2ids
+from utils import tokens2ids
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torch.nn.utils.rnn import pad_sequence
 import numpy as np
 import json
+from collections import Counter
 from tqdm import tqdm
 tqdm.pandas()
 
@@ -83,6 +84,8 @@ def normalize(doc):
 def preprocessor(doc):
     doc = normalize(doc)
     tokens = tokenizer.tokenize(doc)
+    tokens = tokenizer.convert_tokens_to_ids(tokens)
+    tokens = torch.tensor(tokens)
     return tokens
 
 
@@ -100,15 +103,11 @@ def evaluate(model, loader, criterion):
     return loss.data, acc
 
 
-with open('token2id_dic.json', 'r') as f:
-    token2id_dic = json.loads(f.read())
-
 dw = 300
 dh = 50
 L = 4
 batch_size = 1024
 columns = ('category', 'title')
-vocab_size = len(token2id_dic)
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
@@ -116,11 +115,23 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
 
-train['tokens'] = train.title.apply(preprocessor)
-test['tokens'] = test.title.apply(preprocessor)
+# make vacobrary dic
+docs = [normalize(doc) for doc in train.title.values.tolist()]
+tokens = [tokenizer.tokenize(doc) for doc in docs]
+tokens = sum(tokens, [])  # flat list
+counter = Counter(tokens)
 
-X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
-X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+token2id_dic = {}
+vocab_size = len(counter)
+for index, (token, freq) in enumerate(counter.most_common(), 1):
+    if freq < 2:
+        token2id_dic[token] = 0
+    else:
+        token2id_dic[token] = index
+
+
+X_train = train.title.apply(preprocessor)
+X_test = test.title.apply(preprocessor)
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
@@ -138,5 +149,4 @@ test_loader = DataLoader(testset, batch_size=testset.__len__())
 model = model.to(device)
 ds_size = trainset.__len__()
 
-print('train')
 trainer(model, optimizer, loader, test_loader, ds_size, device)
