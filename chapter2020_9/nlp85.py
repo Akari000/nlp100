@@ -59,7 +59,6 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 
     print('Finished Training')
 
-
 class BidirectionalRNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(BidirectionalRNN, self).__init__()

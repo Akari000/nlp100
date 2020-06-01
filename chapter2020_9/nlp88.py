@@ -99,8 +99,8 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 def objective(trial):
     """最小化する目的関数"""
     # optimizer = trial.suggest_categorical('optimizer', ['MomentumSGD', 'Adam'])
-    num_layers = trial.suggest_int('num_layers', 1, 3),
-    dropout_rate = trial.suggest_uniform('dropout_rate', 0.0, 0.5)
+    num_layers = trial.suggest_int('num_layers', 2, 4),
+    dropout_rate = trial.suggest_uniform('dropout_rate', 0.0, 0.2)
     learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)
 
     # モデルを作る
