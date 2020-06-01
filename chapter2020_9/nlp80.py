@@ -1,3 +1,9 @@
+'''# 80. ID番号への変換
+問題51で構築した学習データ中の単語にユニークなID番号を付与したい．
+学習データ中で最も頻出する単語に1，2番目に頻出する単語に2，……といった方法で，
+学習データ中で2回以上出現する単語にID番号を付与せよ．そして，与えられた単語列に対して，ID番号の列を返す関数を実装せよ．
+ただし，出現頻度が2回未満の単語のID番号はすべて0とせよ．
+'''
 import pandas as pd
 from collections import Counter
 from utils import tokenize, normalize

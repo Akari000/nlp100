@@ -1,5 +1,8 @@
-'''85. 双方向RNN・多層化
-順方向と逆方向のRNNの両方を用いて入力テキストをエンコードし，モデルを学習せよ．
+'''86. 畳み込みニューラルネットワーク (CNN)
+ID番号で表現された単語列x=(x1,x2,…,xT)がある．ただし，Tは単語列の長さ，
+xt∈ℝVは単語のID番号のone-hot表記である（Vは単語の総数である）．
+畳み込みニューラルネットワーク（CNN: Convolutional Neural Network）を用い，
+単語列xからカテゴリyを予測するモデルを実装せよ
 '''
 import pandas as pd
 from utils import preprocessor, tokens2ids
@@ -60,23 +63,25 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
     print('Finished Training')
 
 
-class BidirectionalRNN(nn.Module):
+class CNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
-        super(BidirectionalRNN, self).__init__()
-        self.emb = nn.Embedding(vocab_size, data_size, padding_idx=0)
-        self.rnn1 = torch.nn.LSTM(data_size, hidden_size, bidirectional=True)
-        # self.rnn2 = torch.nn.LSTM(2*hidden_size, hidden_size, bidirectional=True)
-        self.liner = nn.Linear(2*hidden_size, output_size)
-        self.softmax = nn.Softmax(dim=1)
+        super(CNN, self).__init__()
+        self.emb = torch.nn.Embedding(vocab_size, data_size)
+        self.conv = torch.nn.Conv1d(data_size, hidden_size, 3, padding=1)  # in_channels, out_channels, kernel_sizes
+        self.pool = torch.nn.MaxPool1d(120)
+        self.liner_px = nn.Linear(data_size*3, hidden_size)
+        self.liner_yc = nn.Linear(hidden_size, output_size)
+        self.act = nn.ReLU()
 
-    def forward(self, x, lengs, hidden=None, cell=None):   # x: (max_len)
+    def forward(self, x):                       # x: (max_len)
         x = self.emb(x)                         # x: (max_length, dw)
-        packed = pack_padded_sequence(
-            x, lengs, batch_first=True, enforce_sorted=False)
-        y, (hidden, cell) = self.rnn1(packed)    # y: (max_len, dh), hidden: (max_len, dh)
-        # y, (hidden, cell) = self.rnn2(y)
-        y = self.liner(hidden.view(hidden.shape[1], -1))
-        y = self.softmax(y)
+        x = x.view(-1, x.shape[2], x.shape[1])  # x: (dw, max_length)
+        x = self.conv(x)                        # 畳み込み x: (dh, max_len)
+        p = self.act(x)
+        c = self.pool(p)                        # c: (dh, 1)
+        c = c.view(c.shape[0], c.shape[1])      # c: (1, dh)
+        y = self.liner_yc(c)                    # c: (1, L)
+        y = torch.softmax(y, dim=1)
         return y
 
 
@@ -105,37 +110,26 @@ dw = 300
 dh = 50
 L = 4
 batch_size = 8
-columns = ('category', 'title')
 vocab_size = len(token2id_dic)
+columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
-test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
-                   names=columns, sep='\t')
-
 
 train['tokens'] = train.title.apply(preprocessor)
-test['tokens'] = test.title.apply(preprocessor)
+
 
 X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
-X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
-
-label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
-Y_train = train.category.map(label2int)
-Y_test = test.category.map(label2int)
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = BidirectionalRNN(dw, dh, L, vocab_size)
-criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
-optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
+model = CNN(dw, dh, L, vocab_size)
+inputs = pad_sequence(X_train, batch_first=True)
+outputs = model(inputs[:1])
 
-trainset = Mydatasets(X_train, Y_train)
-testset = Mydatasets(X_test, Y_test)
-loader = DataLoader(trainset, batch_size=batch_size)
-test_loader = DataLoader(testset, batch_size=testset.__len__())
+print('output.size', outputs.size())
+print(outputs)
 
-model = model.to(device)
-ds_size = trainset.__len__()
-
-trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
+'''
+output.size torch.Size([1, 4])
+tensor([[0.2001, 0.3345, 0.3549, 0.1105]], grad_fn=<SoftmaxBackward>)
+'''

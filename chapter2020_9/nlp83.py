@@ -1,5 +1,9 @@
+'''# 83. ミニバッチ化・GPU上での学習
+問題82のコードを改変し，B事例ごとに損失・勾配を計算して学習を行えるようにせよ（Bの値は適当に選べ）．
+また，GPU上で学習を実行せよ．
+'''
 import pandas as pd
-from utils import preprocessor
+from utils import preprocessor, tokens2ids
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -25,18 +29,6 @@ train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
 test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
-
-
-def token2id(token):
-    if token in token2id_dic:
-        return token2id_dic[token]
-    else:
-        return 0
-
-
-def tokens2ids(tokens):
-    tokens = [token2id(token) for token in tokens]
-    return torch.tensor(tokens, dtype=torch.long)
 
 
 def accuracy(pred, label):
@@ -125,8 +117,8 @@ class Mydatasets(torch.utils.data.Dataset):
 train['tokens'] = train.title.apply(preprocessor)
 test['tokens'] = test.title.apply(preprocessor)
 
-X_train = train.tokens.apply(tokens2ids)
-X_test = test.tokens.apply(tokens2ids)
+X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)

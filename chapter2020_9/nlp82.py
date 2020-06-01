@@ -1,5 +1,9 @@
+'''# 82. 確率的勾配降下法による学習
+確率的勾配降下法（SGD: Stochastic Gradient Descent）を用いて，
+問題81で構築したモデルを学習せよ．訓練データ上の損失と正解率，評価データ上の損失と正解率を表示しながらモデルを学習し，適当な基準（例えば10エポックなど）で終了させよ．
+'''
 import pandas as pd
-from utils import preprocessor
+from utils import preprocessor, tokens2ids
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -25,18 +29,6 @@ train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
                     names=columns, sep='\t')
 test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
-
-
-def token2id(token):
-    if token in token2id_dic:
-        return token2id_dic[token]
-    else:
-        return 0
-
-
-def tokens2ids(tokens):
-    tokens = [token2id(token) for token in tokens]
-    return torch.tensor(tokens, dtype=torch.long)
 
 
 def accuracy(pred, label):
@@ -123,8 +115,8 @@ class Mydatasets(torch.utils.data.Dataset):
 train['tokens'] = train.title.apply(preprocessor)
 test['tokens'] = test.title.apply(preprocessor)
 
-X_train = train.tokens.apply(tokens2ids)
-X_test = test.tokens.apply(tokens2ids)
+X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)

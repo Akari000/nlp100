@@ -1,3 +1,7 @@
+'''# 81. RNNによる予測
+ID番号で表現された単語列x=(x1,x2,…,xT)がある．ただし，Tは単語列の長さ，xt∈ℝVは単語のID番号のone-hot表記である（Vは単語の総数である）．
+再帰型ニューラルネットワーク（RNN: Recurrent Neural Network）を用い，単語列xからカテゴリyを予測するモデルとして，次式を実装せよ．
+'''
 import pandas as pd
 import torch
 from utils import preprocessor, tokens2ids
