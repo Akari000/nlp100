@@ -1,0 +1,28 @@
+# test
+subword-nmt learn-bpe -s 3000 < orig/kyoto-test.tokens.ja > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-test.tokens.ja > orig/kyoto-test.subword.ja
+
+subword-nmt learn-bpe -s 3000 < orig/kyoto-test.tokens.en > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-test.tokens.en > orig/kyoto-test.subword.en
+
+# valid
+subword-nmt learn-bpe -s 3000 < orig/kyoto-dev.tokens.ja > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-dev.tokens.ja > orig/kyoto-dev.subword.ja
+
+subword-nmt learn-bpe -s 3000 < orig/kyoto-dev.tokens.en > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-dev.tokens.en > orig/kyoto-dev.subword.en
+
+# train
+subword-nmt learn-bpe -s 3000 < orig/kyoto-train.tokens.ja > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-train.tokens.ja > orig/kyoto-train.subword.ja
+
+subword-nmt learn-bpe -s 3000 < orig/kyoto-train.tokens.en > codes.txt
+subword-nmt apply-bpe -c codes.txt < orig/kyoto-train.tokens.en > orig/kyoto-train.subword.en
+
+# preprocess
+onmt_preprocess -train_src orig/kyoto-train.subword.ja -train_tgt orig/kyoto-train.subword.en -valid_src orig/kyoto-dev.subword.ja -valid_tgt orig/kyoto-dev.subword.en -save_data data/demo
+# train
+onmt_train -data data/demo -save_model demo-model
+# evaluate
+onmt_translate -model demo-model_acc_XX.XX_ppl_XXX.XX_eX.pt -src orig/kyoto-test.subword.ja -output pred.txt -replace_unk -verbose
+perl tools/multi-bleu.perl orig/kyoto-test.subword.en < pred.text
