@@ -60,9 +60,6 @@ def trainer(model, optimizer, loader, test_loader, ds_size, device, max_iter=10)
 class Mydatasets(torch.utils.data.Dataset):
     def __init__(self, data, labels):
         self.data = data
-        # self.data = pad_sequence(data, batch_first=True)
-        # max_len = len(self.data[0])
-        # self.mask = torch.tensor([[1]*len(x)+[0]*(max_len-len(x)) for x in data])
         self.labels = torch.tensor(labels).long()
         self.datanum = len(data)
 
@@ -72,8 +69,6 @@ class Mydatasets(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         out_data = self.data[idx]
         out_label = self.labels[idx]
-        # mask = self.mask[idx]
-        # print(out_data)
         return out_data, out_label
 
 
@@ -104,18 +99,17 @@ def accuracy(pred, label):
     return (pred == label).mean()
 
 
-def evaluate(model, loader, criterion):
-    for inputs, labels, lengs in loader:
-        outputs = model(inputs, lengs)
-        loss = criterion(outputs, labels)
-        acc = accuracy(outputs, labels)
+def evaluate(model, loader):
+    for inputs, labels in loader:
+        loss, logits = model(inputs, labels=labels)
+        acc = accuracy(logits, labels)
     return loss.data, acc
 
 
 dw = 300
 dh = 50
 L = 4
-batch_size = 32
+batch_size = 64
 columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
@@ -157,3 +151,7 @@ model = model.to(device)
 ds_size = trainset.__len__()
 
 trainer(model, optimizer, loader, test_loader, ds_size, device)
+
+'''
+[train]	loss: 0.371380 accuracy: 0.771927
+'''
