@@ -70,23 +70,25 @@ for data_name in ['train', 'test', 'dev']:
         lines = f.read()
         en_lines = lines.split('\n')
         en_tokens = [preprocess_en(line) for line in en_lines]
-        
-    pairs = pd.DataFrame()
-    pairs['ja'] = ja_tokens
-    pairs['en'] = en_tokens
-    pairs['ja_orig'] = ja_lines
-    pairs['en_orig'] = en_lines
-    pairs.to_csv('%skyoto-%s.pairs' % (DATA_DIR, data_name),
-                 header=False, index=False)
 
-columns = ('ja', 'en', 'ja_orig', 'en_orig')
-pairs = pd.read_csv('%skyoto-%s.pairs' % (DATA_DIR, 'dev'), names=columns)
-print(pairs.head(5))
+    with open('%skyoto-%s.ja.tokens' % (DATA_DIR, data_name), 'wb') as f:
+        pickle.dump(ja_tokens, f)
+
+    with open('%skyoto-%s.en.tokens' % (DATA_DIR, data_name), 'wb') as f:
+        pickle.dump(en_tokens, f)
+
+
+# load
+with open('%skyoto-%s.ja.tokens' % (DATA_DIR, 'dev'), 'rb') as f:
+    ja_tokens = pickle.load(f)
+
+with open('%skyoto-%s.en.tokens' % (DATA_DIR, 'dev'), 'rb') as f:
+    en_tokens = pickle.load(f)
+
+print(ja_tokens[0])
+print(en_tokens[0])
+
 '''
-                                                    ja                                                 en                                            ja_orig                                            en_orig
-0  ['臨済宗', 'は', '、', '中国', '禅', '五', '家', '七', '宗...  ['Rinzai', 'Zen', 'Buddhism', 'is', 'one', 'of...  臨済宗（臨濟宗、りんざいしゅう）は、中国禅五家七宗（ごけしちしゅう）（臨済、潙仰宗、曹洞宗、...  Rinzai Zen Buddhism is one of the Chinese five...
-1  ['彼', 'は', '『', '喝', 'の', '臨済', '』', '『', '臨済'...  ['He', 'was', 'known', 'as', '"RINZAI', 'of', ...     彼は『喝の臨済』『臨済将軍』の異名で知られ、豪放な家風を特徴として中国禅興隆の頂点を極めた。  He was known as "RINZAI of Katu (meaning to he...
-2  ['公案', 'に', '参究', 'する', 'こと', 'により', '見性', 'しよ...  ['With', 'its', 'Zen', 'Talks', 'that', 'try',...  公案に参究することにより見性しようとする看話禅（かんなぜん）で、ただ座禅する曹洞宗の黙照禅と...  With its Zen Talks that try to awaken self awa...
-3                              ['中国', 'における', '臨済宗']                ['Rinzai', 'School', 'in', 'China']                                          中国における臨済宗                             Rinzai School in China
-4  ['臨済宗', 'は', '、', 'その', '名', 'の', '通り', '、', '...  ['As', 'the', 'name', 'implies,', 'Rinzai', 'S...                  臨済宗は、その名の通り、会昌の廃仏後、唐末の宗祖臨済義玄に始まる。  As the name implies, Rinzai School started wit...
+['臨済宗', 'は', '、', '中国', '禅', '五', '家', '七', '宗', 'の', 'ひとつ', 'で', '、', '唐', 'の', '臨済', '義', '玄', 'を', '宗祖', 'と', 'する', '。']
+['Rinzai', 'Zen', 'Buddhism', 'is', 'one', 'of', 'the', 'Chinese', 'five', 'Houses/seven', 'Schools', 'of', 'Zen', '', 'and', 'Gigen', 'RINZAI', '', 'of', 'Tang', 'was', 'its', 'founder.']
 '''
