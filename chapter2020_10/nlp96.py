@@ -4,7 +4,7 @@ Tensorboardなどのツールを用い，ニューラル機械翻訳モデルが
 from torch.utils.tensorboard import SummaryWriter
 import re
 
-with open('./train_logs.txt') as f:
+with open('./demo-model-log') as f:
     text = f.read()
 
 steps = re.findall(r'Step (\d+)/', text)

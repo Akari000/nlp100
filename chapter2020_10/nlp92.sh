@@ -2,9 +2,10 @@
 91で学習したニューラル機械翻訳モデルを用い，
 与えられた（任意の）日本語の文を英語に翻訳するプログラムを実装せよ
 '''
-onmt_translate -model demo-model_step_800.pt -src orig/kyoto-test.tokens.ja -output pred.txt -replace_unk -verbose
+onmt_translate -model demo-model_step_1200.pt -src orig/kyoto-test.tokens.ja -output pred.txt -replace_unk -verbose
 
 """output
+
 SENT 984: ['現', '門', '首', 'は', '大谷', '暢', '顕', '（', '浄', '如', '）', '。']
 PRED 984: 現 ( 門 ) ( 門 ) 浄 ( 如 ) )
 PRED SCORE: -6.4147
@@ -28,4 +29,6 @@ PRED SCORE: -0.0330
 SENT 989: ['大谷大学']
 PRED 989: 大谷大学
 PRED SCORE: -0.0330
+
+日本語→英語にならない．最初の単語はそのまま返している．繰り返しが多い．
 """

@@ -38,14 +38,12 @@ for data_name in ['train', 'test', 'dev']:
         ja_tokens = []
         for line in tqdm(lines):
             ja_tokens.append(tokenize_ja(line))
-        print(ja_tokens[:10])
 
     with open('%skyoto-%s.en' % (DATA_DIR, data_name), 'r', encoding='utf-8') as f:
         lines = f.readlines()
         en_tokens = []
         for line in tqdm(lines):
             en_tokens.append(tokenize_en(line))
-        print(en_tokens[:10])
 
     # save
     with open('%skyoto-%s.tokens.ja' % (DATA_DIR, data_name), 'w') as f:
@@ -56,15 +54,13 @@ for data_name in ['train', 'test', 'dev']:
 
 
 '''
-with open('%skyoto-%s.tokens_all.ja' % (DATA_DIR, 'train'), 'r') as f:
-    ja_tokens = f.readlines()
+kyoto-train.tokens.ja
+雪舟 （ せっしゅう 、 1420 年 （ 応永 27 年 ） - 1506 年 （ 永 正 3 年 ） ） は 号 で 、 15 世紀 後半 室町 時代 に 活躍 し た 水墨 画家 ・ 禅僧 で 、 画聖 と も 称え られる 。
+日本 の 水墨 画 を 一変 さ せ た 。
+諱 は 「 等 楊 （ とう よう ） 」 、 もしくは 「 拙 宗 （ せっしゅう ） 」 と 号 し た 。
 
-with open('%skyoto-%s.tokens_all.en' % (DATA_DIR, 'train'), 'r') as f:
-    en_tokens = f.readlines()
-
-with open('%skyoto-%s.tokens.ja' % (DATA_DIR, 'train'), 'w') as f:
-    f.writelines(ja_tokens[:100000])
-
-with open('%skyoto-%s.tokens.en' % (DATA_DIR, 'train'), 'w') as f:
-    f.writelines(en_tokens[:100000])
+kyoto-train.tokens.en
+Known as Sesshu ( 1420 - 1506 ) , he was an ink painter and Zen monk active in the Muromachi period in the latter half of the 15th century , and was called a master painter .
+He revolutionized the Japanese ink painting .
+He was given the posthumous name " Toyo " or " Sesshu ( 拙宗 ) . "
 '''
