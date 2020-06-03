@@ -2,6 +2,7 @@
 91で学習したニューラル機械翻訳モデルを用い，
 与えられた（任意の）日本語の文を英語に翻訳するプログラムを実装せよ
 '''
+# TODO -replace_unk を使っているので，inputsの語彙しか使われなくなってしまっていた．
 onmt_translate -model demo-model_step_1200.pt -src orig/kyoto-test.tokens.ja -output pred.txt -replace_unk -verbose
 
 """output

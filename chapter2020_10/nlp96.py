@@ -4,6 +4,7 @@ Tensorboardなどのツールを用い，ニューラル機械翻訳モデルが
 from torch.utils.tensorboard import SummaryWriter
 import re
 
+# 学習のコマンドでtensorboardのオプションをつけられるらしい．
 with open('./demo-model-log') as f:
     text = f.read()
 
