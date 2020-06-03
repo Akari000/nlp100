@@ -1,3 +1,6 @@
+'''95. サブワード化Permalink
+トークンの単位を単語や形態素からサブワードに変更し，91-94の実験を再度実施せよ．
+'''
 # test
 subword-nmt learn-bpe -s 3000 < orig/kyoto-test.tokens.ja > codes.txt
 subword-nmt apply-bpe -c codes.txt < orig/kyoto-test.tokens.ja > orig/kyoto-test.subword.ja
@@ -24,5 +27,5 @@ onmt_preprocess -train_src orig/kyoto-train.subword.ja -train_tgt orig/kyoto-tra
 # train
 onmt_train -data data/subword -save_model subword-model
 # evaluate
-onmt_translate -model subword-model_acc_XX.XX_ppl_XXX.XX_eX.pt -src orig/kyoto-test.subword.ja -output subword-pred.txt -replace_unk -verbose
+onmt_translate -model subword-model_step_800.pt -src orig/kyoto-test.subword.ja -output subword-pred.txt -replace_unk -verbose
 perl tools/multi-bleu.perl orig/kyoto-test.subword.en < pred.text

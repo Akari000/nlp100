@@ -5,12 +5,12 @@
 </head>
 <body>
 <form action="/reply" method="POST">
-    <input type="text" name="reply" placeholder="reply">
+    <input type="text" name="reply" placeholder="enter the message">
 </form>
 
-{% for (user, system) in dialogue %}
-  {user}
-  {system}
+{% for utter in dialogue %}
+  you: {{utter.user}} <br/>
+  system: {{utter.system}} <br/>
 {% endfor %}    
 
 </body>
