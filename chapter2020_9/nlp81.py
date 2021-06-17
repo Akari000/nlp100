@@ -43,12 +43,12 @@ class RNN(nn.Module):
 
 
 train['tokens'] = train.title.apply(preprocessor)
-X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 # X_train[0] = tensor([   8,    0, 2416, 1604, 2143,    5, 1605,    4,  745])
 
 lengs = torch.tensor([len(x) for x in X_train])
 
-inputs = pad_sequence(tuple(X_train.values), batch_first=True)
+inputs = pad_sequence(X_train, batch_first=True)
 model = RNN(dw, dh, L, vocab_size)
 
 outputs, hidden = model(inputs, lengs)
