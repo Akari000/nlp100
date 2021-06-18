@@ -64,7 +64,6 @@ class BidirectionalRNN(nn.Module):
         super(BidirectionalRNN, self).__init__()
         self.emb = nn.Embedding(vocab_size, data_size, padding_idx=0)
         self.rnn1 = torch.nn.LSTM(data_size, hidden_size, bidirectional=True)
-        # self.rnn2 = torch.nn.LSTM(2*hidden_size, hidden_size, bidirectional=True)
         self.liner = nn.Linear(2*hidden_size, output_size)
         self.softmax = nn.Softmax(dim=1)
 
@@ -73,7 +72,6 @@ class BidirectionalRNN(nn.Module):
         packed = pack_padded_sequence(
             x, lengs, batch_first=True, enforce_sorted=False)
         y, (hidden, cell) = self.rnn1(packed)    # y: (max_len, dh), hidden: (max_len, dh)
-        # y, (hidden, cell) = self.rnn2(y)
         y = self.liner(hidden.view(hidden.shape[1], -1))
         y = self.softmax(y)
         return y

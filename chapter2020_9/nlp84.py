@@ -14,11 +14,9 @@ from gensim.models import KeyedVectors
 from tqdm import tqdm
 tqdm.pandas()
 
-
 googlenews = KeyedVectors.load_word2vec_format(
     '../data/GoogleNews-vectors-negative300.bin', binary=True)
-weights = googlenews.wv.syn0
-
+weights = googlenews.syn0
 
 def accuracy(pred, label):
     pred = np.argmax(pred.data.numpy(), axis=1)  # 行ごとに最大値のインデックスを取得する．
@@ -69,8 +67,11 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 class RNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size):
         super(RNN, self).__init__()
-        self.emb.weight = torch.nn.Parameter(weights)  # TODO embeddingの重みをgooglenews.weightで初期化する
-        self.hidden_size = hiden_size
+        vocab_size = weights.shape[0]
+        embedding_dim = weights.shape[1]
+        self.emb = nn.Embedding(vocab_size, embedding_dim)
+        self.emb.weight = torch.nn.Parameter(torch.from_numpy(weights))  # TODO embeddingの重みをgooglenews.weightで初期化する
+        self.hidden_size = hidden_size
         self.rnn = nn.LSTM(data_size, hidden_size, batch_first=True)
         self.liner = nn.Linear(hidden_size, output_size)
         self.softmax = nn.Softmax(dim=1)
