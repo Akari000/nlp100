@@ -2,7 +2,7 @@
 事前学習済みの単語ベクトル（例えば，Google Newsデータセット（約1,000億単語）での学習済み単語ベクトル）で単語埋め込みemb(x)を初期化し，学習せよ．
 '''
 import pandas as pd
-from utils import preprocessor
+from utils import preprocessor, tokens2ids
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -14,19 +14,10 @@ from gensim.models import KeyedVectors
 from tqdm import tqdm
 tqdm.pandas()
 
-# TODO embeddingの重みをgooglenews.weightで初期化する
+
 googlenews = KeyedVectors.load_word2vec_format(
     '../data/GoogleNews-vectors-negative300.bin', binary=True)
-
-
-def tokens2vec(tokens):
-    vec = []
-    for token in tokens:
-        if token in googlenews:
-            vec.append(googlenews[token])
-        else:
-            vec.append(np.array([0]*dw))
-    return torch.tensor(vec)
+weights = googlenews.wv.syn0
 
 
 def accuracy(pred, label):
@@ -78,13 +69,14 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 class RNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size):
         super(RNN, self).__init__()
-        self.hidden_size = hidden_size
+        self.emb.weight = torch.nn.Parameter(weights)  # TODO embeddingの重みをgooglenews.weightで初期化する
+        self.hidden_size = hiden_size
         self.rnn = nn.LSTM(data_size, hidden_size, batch_first=True)
         self.liner = nn.Linear(hidden_size, output_size)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x, lengs, hidden=None, cell=None):   # x: (max_len)
-        # x = self.emb(x)                         # x: (max_length, dw)
+        x = self.emb(x)                         # x: (max_length, dw)
         packed = pack_padded_sequence(
             x, lengs, batch_first=True, enforce_sorted=False)
         y, (hidden, cell) = self.rnn(packed)    # y: (max_len, dh), hidden: (max_len, dh)
@@ -129,8 +121,9 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
 train['tokens'] = train.title.apply(preprocessor)
 test['tokens'] = test.title.apply(preprocessor)
 
-X_train = train.tokens.progress_apply(tokens2vec).values.tolist()
-X_test = test.tokens.progress_apply(tokens2vec).values.tolist()
+X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
+X_test = tuple(test.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
+
 # X_train = torch.tensor(X_train, dtype=torch.float32)
 
 pad_sequence(X_train, batch_first=True)

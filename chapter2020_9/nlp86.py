@@ -67,7 +67,7 @@ class CNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(CNN, self).__init__()
         self.emb = torch.nn.Embedding(vocab_size, data_size)
-        self.conv = torch.nn.Conv1d(data_size, hidden_size, 3, padding=1)  # in_channels, out_channels, kernel_sizes
+        self.conv = torch.nn.Conv2d(data_size, hidden_size, 3, padding=1)  # in_channels, out_channels, kernel_sizes
         self.pool = torch.nn.MaxPool1d(120)
         self.liner_px = nn.Linear(data_size*3, hidden_size)
         self.liner_yc = nn.Linear(hidden_size, output_size)
@@ -119,7 +119,7 @@ train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
 train['tokens'] = train.title.apply(preprocessor)
 
 
-X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 
 
 model = CNN(dw, dh, L, vocab_size)

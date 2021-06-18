@@ -89,7 +89,7 @@ class RNN(nn.Module):
     def forward(self, x, lengs, hidden=None, cell=None):   # x: (max_len)
         x = self.emb(x)                         # x: (max_length, dw)
         packed = pack_padded_sequence(
-            x, lengs, batch_first=True, enforce_sorted=False)
+            x, lengs.cpu(), batch_first=True, enforce_sorted=False)
         y, (hidden, cell) = self.rnn(packed)    # y: (max_len, dh), hidden: (max_len, dh)
         y = self.liner(hidden.view(hidden.shape[1], -1))
         y = self.softmax(y)
@@ -117,8 +117,8 @@ class Mydatasets(torch.utils.data.Dataset):
 train['tokens'] = train.title.apply(preprocessor)
 test['tokens'] = test.title.apply(preprocessor)
 
-X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
-X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
+X_test = tuple(test.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)

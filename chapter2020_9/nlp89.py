@@ -126,8 +126,8 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
 # max_len = train[train.len < 512].sort_values(
 #     'len', ascending=False).len.tolist()[0]
 max_len = 31
-train['tokens'] = train.title.apply(preprocessor, max_len=max_len)
-test['tokens'] = test.title.apply(preprocessor, max_len=max_len)
+train['tokens'] = tuple(train.title.apply(preprocessor, max_len=max_len))
+test['tokens'] = tuple(test.title.apply(preprocessor, max_len=max_len))
 
 
 X_train = train['tokens'].values.tolist()

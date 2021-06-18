@@ -120,8 +120,8 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
 train['tokens'] = train.title.apply(preprocessor)
 test['tokens'] = test.title.apply(preprocessor)
 
-X_train = train.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
-X_test = test.tokens.apply(tokens2ids, token2id_dic=token2id_dic)
+X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
+X_test = tuple(test.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
