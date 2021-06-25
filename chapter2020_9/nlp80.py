@@ -37,6 +37,7 @@ counter = Counter(tokens)
 token2id_dic = {}
 vocab_size = len(counter)
 for index, (token, freq) in enumerate(counter.most_common(), 1):
+    
     if freq < 2:
         token2id_dic[token] = 0
     else:
@@ -47,9 +48,10 @@ with open('token2id_dic.json', 'w') as f:
 
 
 text = 'I am a cat'
-ids = tokens2ids(tokenize(text), token2id_dic=token2id_dic)
+ids = tokens2ids(tokenize(normalize(text)), token2id_dic=token2id_dic)
 print(ids)
 
+
 '''
-tensor([   0, 3353,   12, 3426])
+tensor([   164, 3353,   12, 3426])
 '''
