@@ -14,9 +14,9 @@ from gensim.models import KeyedVectors
 from tqdm import tqdm
 tqdm.pandas()
 
-googlenews = KeyedVectors.load_word2vec_format(
+googlenews_vectors = KeyedVectors.load_word2vec_format(
     '../data/GoogleNews-vectors-negative300.bin', binary=True)
-weights = googlenews.syn0
+# weights = googlenews.syn0
 
 def accuracy(pred, label):
     pred = np.argmax(pred.data.numpy(), axis=1)  # 行ごとに最大値のインデックスを取得する．
@@ -65,12 +65,10 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 
 
 class RNN(nn.Module):
-    def __init__(self, data_size, hidden_size, output_size):
+    def __init__(self, vocab_size, data_size, hidden_size, output_size):
         super(RNN, self).__init__()
-        vocab_size = weights.shape[0]
-        embedding_dim = weights.shape[1]
-        self.emb = nn.Embedding(vocab_size, embedding_dim)
-        self.emb.weight = torch.nn.Parameter(torch.from_numpy(weights))  # TODO embeddingの重みをgooglenews.weightで初期化する
+        self.emb = nn.Embedding(vocab_size, data_size)
+        # self.emb.weight = torch.nn.Parameter(torch.from_numpy(weights))  # TODO embeddingの重みをgooglenews.weightで初期化する．tokenを照しあわせる
         self.hidden_size = hidden_size
         self.rnn = nn.LSTM(data_size, hidden_size, batch_first=True)
         self.liner = nn.Linear(hidden_size, output_size)
@@ -125,8 +123,6 @@ test['tokens'] = test.title.apply(preprocessor)
 X_train = tuple(train.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 X_test = tuple(test.tokens.apply(tokens2ids, token2id_dic=token2id_dic))
 
-# X_train = torch.tensor(X_train, dtype=torch.float32)
-
 pad_sequence(X_train, batch_first=True)
 label2int = {'b': 0, 't': 1, 'e': 2, 'm': 3}
 Y_train = train.category.map(label2int)
@@ -134,7 +130,13 @@ Y_test = test.category.map(label2int)
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = RNN(dw, dh, L)
+model = RNN(len(token2id_dic), dw, dh, L)
+
+for token, i in token2id_dic.items():
+    if token in googlenews_vectors:
+        model.emb.weight.data[i] = torch.tensor(googlenews_vectors[token], dtype=torch.float32)
+
+model.emb.weight = torch.nn.Parameter(model.emb.weight)
 criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
 optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
 
@@ -149,35 +151,45 @@ ds_size = trainset.__len__()
 trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, 10)
 
 '''
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 102.30it/s]
 epoch:  0
-[train]	loss: 1.306197 accuracy: 0.418103
-[test]	loss: 1.296853 accuracy: 0.437781
+[train]	loss: 1.326823 accuracy: 0.405922
+[test]	loss: 1.299863 accuracy: 0.407796
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 102.33it/s]
 epoch:  1
-[train]	loss: 1.278086 accuracy: 0.422695
-[test]	loss: 1.258812 accuracy: 0.456522
+[train]	loss: 1.298807 accuracy: 0.425319
+[test]	loss: 1.265611 accuracy: 0.410045
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 102.16it/s]
 epoch:  2
-[train]	loss: 1.253694 accuracy: 0.561282
-[test]	loss: 1.212802 accuracy: 0.682909
+[train]	loss: 1.279971 accuracy: 0.461957
+[test]	loss: 1.234034 accuracy: 0.503748
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 101.37it/s]
 epoch:  3
-[train]	loss: 1.220054 accuracy: 0.735757
-[test]	loss: 1.014457 accuracy: 0.766867
+[train]	loss: 1.245675 accuracy: 0.637463
+[test]	loss: 1.159216 accuracy: 0.705397
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 100.89it/s]
 epoch:  4
-[train]	loss: 1.233165 accuracy: 0.765555
-[test]	loss: 0.978168 accuracy: 0.774363
+[train]	loss: 1.073214 accuracy: 0.733977
+[test]	loss: 1.006331 accuracy: 0.758621
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 98.35it/s]
 epoch:  5
-[train]	loss: 1.236411 accuracy: 0.772114
-[test]	loss: 0.968411 accuracy: 0.780360
+[train]	loss: 1.005972 accuracy: 0.757871
+[test]	loss: 0.984906 accuracy: 0.766117
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 101.04it/s]
 epoch:  6
-[train]	loss: 1.238182 accuracy: 0.776143
-[test]	loss: 0.964659 accuracy: 0.781859
+[train]	loss: 0.995498 accuracy: 0.766679
+[test]	loss: 0.977657 accuracy: 0.767616
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 101.28it/s]
 epoch:  7
-[train]	loss: 1.238690 accuracy: 0.778579
-[test]	loss: 0.959650 accuracy: 0.784108
+[train]	loss: 0.993898 accuracy: 0.773238
+[test]	loss: 0.973279 accuracy: 0.775112
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 102.57it/s]
 epoch:  8
-[train]	loss: 1.240388 accuracy: 0.781765
-[test]	loss: 0.958462 accuracy: 0.784108
+[train]	loss: 0.994754 accuracy: 0.777361
+[test]	loss: 0.970067 accuracy: 0.777361
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1334/1334 [00:13<00:00, 100.22it/s]
 epoch:  9
-[train]	loss: 1.241063 accuracy: 0.783265
-[test]	loss: 0.957121 accuracy: 0.785607
+[train]	loss: 0.990764 accuracy: 0.781203
+[test]	loss: 0.967038 accuracy: 0.778861
 Finished Training
 '''
