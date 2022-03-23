@@ -24,7 +24,7 @@ def accuracy(pred, label):
 
 def evaluate(model, loader):
     for inputs, labels, lengs in loader:
-        outputs = model(inputs, lengs)
+        outputs = model(inputs)
         loss = criterion(outputs, labels)
         acc = accuracy(outputs, labels)
     return loss.data, acc
@@ -40,7 +40,7 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
             labels = labels.to(device)
             lengs = lengs.to(device)
 
-            outputs = model(inputs, lengs)
+            outputs = model(inputs)
             loss = criterion(outputs, labels)
             model.zero_grad()
             loss.backward()

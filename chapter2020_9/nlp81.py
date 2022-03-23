@@ -35,6 +35,7 @@ class RNN(nn.Module):
         packed = pack_padded_sequence(
             x, lengs, batch_first=True, enforce_sorted=False)
         y, hidden = self.rnn(packed, hidden)    # y: (max_len, dh), hidden: (max_len, dh)
+        # TODO yでなくhiddenを使えばpad_packed_sequenceをしなくて良い
         y, _ = pad_packed_sequence(y, batch_first=True)
         y = y[:, -1, :]
         y = self.liner(y)

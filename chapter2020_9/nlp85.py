@@ -73,7 +73,6 @@ class BidirectionalRNN(nn.Module):
             x, lengs, batch_first=True, enforce_sorted=False)
         y, (hidden, cell) = self.rnn1(packed)    # y: (max_len, dh), hidden: (max_len, dh)
         y = self.liner(hidden.view(hidden.shape[1], -1))
-        print(hidden.shape, hidden.view(hidden.shape[1], -1))
         y = self.softmax(y)
         return y
 
@@ -102,7 +101,7 @@ with open('token2id_dic.json', 'r') as f:
 dw = 300
 dh = 50
 L = 4
-batch_size = 8
+batch_size =128
 columns = ('category', 'title')
 vocab_size = len(token2id_dic)
 
@@ -126,7 +125,7 @@ Y_test = test.category.map(label2int)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = BidirectionalRNN(dw, dh, L, vocab_size)
 criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
-optimizer = optim.SGD(model.parameters(), lr=0.1)  # 確率的勾配降下法
+optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
 
 trainset = Mydatasets(X_train, Y_train)
 testset = Mydatasets(X_test, Y_test)

@@ -7,10 +7,8 @@ xt∈ℝVは単語のID番号のone-hot表記である（Vは単語の総数で�
 import pandas as pd
 from utils import preprocessor, tokens2ids
 import torch
-import torch.optim as optim
 import torch.nn as nn
-from torch.utils.data import DataLoader
-from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
+from torch.nn.utils.rnn import pad_sequence
 import numpy as np
 import json
 from tqdm import tqdm
@@ -24,7 +22,7 @@ def accuracy(pred, label):
 
 
 def evaluate(model, loader):
-    for inputs, labels, lengs in loader:
+    for inputs, labels in loader:
         outputs = model(inputs)
         loss = criterion(outputs, labels)
         acc = accuracy(outputs, labels)
@@ -35,11 +33,10 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
     for epoch in range(10):
         n_correct = 0
         total_loss = 0
-        for i, (inputs, labels, lengs) in enumerate(tqdm(loader)):
+        for i, (inputs, labels) in enumerate(tqdm(loader)):
             inputs = inputs[:, :max(lengs)]
             inputs = inputs.to(device)
             labels = labels.to(device)
-            lengs = lengs.to(device)
 
             outputs = model(inputs)
             loss = criterion(outputs, labels)
@@ -66,17 +63,20 @@ def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, m
 class CNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size, vocab_size):
         super(CNN, self).__init__()
+        filter_size = 3
         self.emb = torch.nn.Embedding(vocab_size, data_size)
-        self.conv = torch.nn.Conv1d(data_size, hidden_size, 3, padding=1)  # in_channels, out_channels, kernel_sizes
+        # self.conv = torch.nn.Conv1d(data_size, hidden_size, 3, padding=1)  # in_channels, out_channels, kernel_sizes
+        self.conv = torch.nn.Conv2d(1, hidden_size, (filter_size, data_size), stride=1, padding=(1,0))
         self.pool = torch.nn.MaxPool1d(120)
         self.liner_px = nn.Linear(data_size*3, hidden_size)
         self.liner_yc = nn.Linear(hidden_size, output_size)
         self.act = nn.ReLU()
 
     def forward(self, x):                       # x: (max_len)
-        x = self.emb(x)                         # x: (max_length, dw)
-        x = x.view(-1, x.shape[2], x.shape[1])  # x: (dw, max_length)
-        x = self.conv(x)                        # 畳み込み x: (dh, max_len)
+        x = self.emb(x).unsqueeze(1)                         # x: (max_length, dw)
+        # x = x.view(-1, x.shape[2], x.shape[1])  # x: (dw, max_length)
+        x = self.conv(x)                       # 畳み込み x: (dh, max_len)
+        x = x.unsqueeze(-1)
         p = self.act(x)
         c = self.pool(p)                        # c: (dh, 1)
         c = c.view(c.shape[0], c.shape[1])      # c: (1, dh)
@@ -87,7 +87,6 @@ class CNN(nn.Module):
 
 class Mydatasets(torch.utils.data.Dataset):
     def __init__(self, data, labels):
-        self.lengs = torch.tensor([len(x) for x in data])
         self.data = pad_sequence(data, batch_first=True)
         self.labels = torch.tensor(labels).long()
 
@@ -99,8 +98,7 @@ class Mydatasets(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         out_data = self.data[idx]
         out_label = self.labels[idx]
-        lengs = self.lengs[idx]
-        return out_data, out_label, lengs
+        return out_data, out_label
 
 
 with open('token2id_dic.json', 'r') as f:

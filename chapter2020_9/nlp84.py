@@ -31,7 +31,6 @@ def evaluate(model, loader):
         acc = accuracy(outputs, labels)
     return loss.data, acc
 
-
 def trainer(model, criterion, optimizer, loader, test_loader, ds_size, device, max_iter=10):
     for epoch in range(10):
         n_correct = 0
@@ -108,7 +107,7 @@ with open('token2id_dic.json', 'r') as f:
 dw = 300
 dh = 50
 L = 4
-batch_size = 8
+batch_size = 128
 columns = ('category', 'title')
 
 train = pd.read_csv('../data/NewsAggregatorDataset/train.txt',
@@ -136,9 +135,10 @@ for token, i in token2id_dic.items():
     if token in googlenews_vectors:
         model.emb.weight.data[i] = torch.tensor(googlenews_vectors[token], dtype=torch.float32)
 
+# 学習されるパラメータにする
 model.emb.weight = torch.nn.Parameter(model.emb.weight)
 criterion = nn.CrossEntropyLoss()  # クロスエントロピー損失関数
-optimizer = optim.SGD(model.parameters(), lr=0.01)  # 確率的勾配降下法
+optimizer = optim.SGD(model.parameters(), lr=0.1)  # 確率的勾配降下法
 
 trainset = Mydatasets(X_train, Y_train)
 testset = Mydatasets(X_test, Y_test)

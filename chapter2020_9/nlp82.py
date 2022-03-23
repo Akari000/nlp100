@@ -31,13 +31,14 @@ test = pd.read_csv('../data/NewsAggregatorDataset/test.txt',
                    names=columns, sep='\t')
 
 
-def accuracy(pred, label):
+def accuracy(pred, labels):
     pred = np.argmax(pred.data.numpy(), axis=1)  # 行ごとに最大値のインデックスを取得する．
-    label = label.data.numpy()
-    return (pred == label).mean()
+    labels = labels.data.numpy()
+    return (pred == labels).mean()
 
 
 def evaluate(model, loader):
+    # eval_grad? などでメモリを節約する
     for inputs, labels, lengs in loader:
         outputs = model(inputs, lengs)
         loss = criterion(outputs, labels)
